@@ -1,39 +1,32 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+import { Stack } from "expo-router";
+import { useFonts } from "expo-font";
+import { useEffect } from "react";
+import * as SplashScreen from "expo-splash-screen";
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+  const [fontsLoaded, error] = useFonts({
+    "PramukhRounded-Bold": require("../assets/fonts/PramukhRounded-Bold.otf"),
+    "PramukhRounded-SemiBold": require("../assets/fonts/PramukhRounded-Semibold.otf"),
+    "Poppins-Light": require("../assets/fonts/Poppins-Light.otf"),
+    "Poppins-Regular": require("../assets/fonts/Poppins-Regular.otf"),
+    "Poppins-Medium": require("../assets/fonts/Poppins-Medium.otf"),
+    "Poppins-SemiBold": require("../assets/fonts/Poppins-SemiBold.otf"),
+    "Poppins-Bold": require("../assets/fonts/Poppins-Bold.otf"),
   });
 
   useEffect(() => {
-    if (loaded) {
+    if (fontsLoaded || error) {
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [fontsLoaded, error]);
 
-  if (!loaded) {
+  if (!fontsLoaded && !error) {
     return null;
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Index" />
+    </Stack>
   );
 }
