@@ -1,10 +1,12 @@
 import React, { useEffect, useReducer } from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import supabase from "./supabase";
 import { StatusBar } from "expo-status-bar";
+import { View, StyleSheet, Text } from "react-native";
 
-import DestinationList from "../screens/DestinationList";
-import { IDestination } from "../screens/DestinationList/types";
+import DestinationList from "../src/screens/DestinationList";
+import { IDestination } from "../src/screens/DestinationList/types";
+import { colors } from "@/src/theme";
 
 interface AppState {
   destinations?: IDestination[];
@@ -15,7 +17,18 @@ interface AppAction {
   payload: IDestination[];
 }
 
-const MyStack = createNativeStackNavigator();
+const MyTabs = createBottomTabNavigator();
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  icon: {
+    fontSize: 24,
+  },
+});
 
 export default function App() {
   const reducer = (state: AppState, action: AppAction): AppState => {
@@ -30,7 +43,7 @@ export default function App() {
 
   useEffect(() => {
     async function getDestinations() {
-      let { data, error } = await supabase.from("Destination").select("*");
+      const { data, error } = await supabase.from("Destination").select("*");
       if (error) {
         console.log("Error", error);
       }
@@ -43,17 +56,41 @@ export default function App() {
   return (
     <>
       <StatusBar style="dark" />
-      <MyStack.Navigator>
-        <MyStack.Screen
+      <MyTabs.Navigator
+        screenOptions={{
+          tabBarStyle: {
+            backgroundColor: colors.primary4,
+            paddingTop: 10,
+          },
+        }}
+      >
+        <MyTabs.Screen
           name="Destinations"
-          options={{ title: "Climbing App" }}
-          component={() => (
+          options={{
+            headerShown: false,
+            tabBarIcon: () => <Text style={styles.icon}>🧗‍♀️</Text>,
+          }}
+        >
+          {() => (
             <DestinationList
               destinations={state.destinations as IDestination[]}
             />
           )}
-        />
-      </MyStack.Navigator>
+        </MyTabs.Screen>
+        <MyTabs.Screen
+          name="Add Destinations"
+          options={{
+            headerShown: false,
+            tabBarIcon: () => <Text style={styles.icon}>⛰️</Text>,
+          }}
+        >
+          {() => (
+            <View style={styles.container}>
+              <Text>Add Destinations Screen</Text>
+            </View>
+          )}
+        </MyTabs.Screen>
+      </MyTabs.Navigator>
     </>
   );
 }
