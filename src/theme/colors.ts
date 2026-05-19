@@ -5,8 +5,15 @@ export const colors = {
 
   // Primary Colors
   primary1: "#59524E",
+  primary2: "#8B8581",
   primary4: "#D8C8C6",
-  secondary: "#1976D2", // Blue
+  primary5: "rgba(120, 120, 128, 0.16)",
+
+  // Secondary Colors
+  secondary4: "#F3DAB1",
+
+  // neutral colors
+  neutral4: "#B3B3B3",
 
   // Text Colors
   text: "#3F475E",

@@ -1,3 +1,5 @@
+import { colors } from "./colors";
+
 export const typography = {
   heading1: {
     fontFamily: "PramukhRounded-Bold",
@@ -14,6 +16,11 @@ export const typography = {
   bodyText: {
     fontFamily: "Poppins-Light",
     fontSize: 15,
-    color: "#333333",
+    color: colors.text,
+  },
+  linkText: {
+    fontFamily: "Poppins-Medium",
+    fontSize: 15,
+    color: colors.text,
   },
 };

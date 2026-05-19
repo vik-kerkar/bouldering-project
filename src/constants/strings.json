@@ -1,0 +1,15 @@
+{
+  "addDestination": {
+    "headline": "Add a Destination",
+    "options": {
+      "destinations": "Destinations",
+      "coordinates": "Coordinates"
+    },
+    "searchPlaceholder": {
+      "destination": "Search destination name"
+    }
+  },
+  "destinationList": {
+    "headline": "Climbing Destinations"
+  }
+}
