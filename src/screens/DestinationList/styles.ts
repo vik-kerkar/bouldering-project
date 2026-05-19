@@ -1,17 +1,9 @@
 import { StyleSheet } from "react-native";
-import { typography, colors } from "../../theme";
+import globalStyles from "../../theme/globalStyles";
 
 const styles = StyleSheet.create({
   headline: {
-    ...typography.heading1,
-    color: colors.primary1,
-    marginVertical: 12,
-  },
-  container: {
-    backgroundColor: colors.background,
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 30,
+    ...globalStyles.heading1,
   },
 });
 
