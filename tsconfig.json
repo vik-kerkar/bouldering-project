@@ -11,7 +11,9 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
-    "src/screens/DestinationList/DestinationList.test.tsx"
+    "src/screens/DestinationList/DestinationList.test.tsx",
+    "metro.config.js",
+    "test/jest.setup.ts"
   ],
   "exclude": ["node_modules", "node_modules/**/*"],
   "types": ["jest", "@testing-library/jest-native"]

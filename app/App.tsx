@@ -2,11 +2,12 @@ import React, { useEffect, useReducer } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import supabase from "./supabase";
 import { StatusBar } from "expo-status-bar";
-import { View, StyleSheet, Text } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 import DestinationList from "../src/screens/DestinationList";
 import { IDestination } from "../src/screens/DestinationList/types";
 import { colors } from "@/src/theme";
+import AddDestination from "@/src/screens/AddDestination";
 
 interface AppState {
   destinations?: IDestination[];
@@ -20,13 +21,14 @@ interface AppAction {
 const MyTabs = createBottomTabNavigator();
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
   icon: {
     fontSize: 24,
+  },
+  container: {
+    backgroundColor: colors.background,
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 30,
   },
 });
 
@@ -57,10 +59,14 @@ export default function App() {
     <>
       <StatusBar style="dark" />
       <MyTabs.Navigator
+        initialRouteName="Destinations"
+        screenLayout={({ children }) => (
+          <View style={styles.container}>{children}</View>
+        )}
         screenOptions={{
           tabBarStyle: {
             backgroundColor: colors.primary4,
-            paddingTop: 10,
+            paddingVertical: 10,
           },
         }}
       >
@@ -84,11 +90,7 @@ export default function App() {
             tabBarIcon: () => <Text style={styles.icon}>⛰️</Text>,
           }}
         >
-          {() => (
-            <View style={styles.container}>
-              <Text>Add Destinations Screen</Text>
-            </View>
-          )}
+          {() => <AddDestination />}
         </MyTabs.Screen>
       </MyTabs.Navigator>
     </>
