@@ -9,39 +9,39 @@ import App from "../app/App";
 
 describe("App with TabNavigator", () => {
   it("should render TabNavigator with Destinations tab", async () => {
-    await waitFor(() =>
-      render(
-        <NavigationContainer>
-          <App />
-        </NavigationContainer>,
-      ),
+    render(
+      <NavigationContainer>
+        <App />
+      </NavigationContainer>,
     );
 
     // Check that Destinations tab content is rendered
-    expect(screen.getByText("Destinations")).toBeTruthy();
+    expect(await screen.findByText("Destinations")).toBeTruthy();
   });
 
   it("should render TabNavigator with Add Destinations tab", async () => {
-    await waitFor(() =>
-      render(
-        <NavigationContainer>
-          <App />
-        </NavigationContainer>,
-      ),
+    render(
+      <NavigationContainer>
+        <App />
+      </NavigationContainer>,
     );
 
     // Check that Add Destinations tab content is rendered
-    expect(screen.getByText("Add Destinations")).toBeTruthy();
+    expect(await screen.findByText("Add Destinations")).toBeTruthy();
   });
 
   it("should render the correct screen, when the appropriate tab is pressed", async () => {
-    await waitFor(() =>
-      render(
-        <NavigationContainer>
-          <App />
-        </NavigationContainer>,
-      ),
+    render(
+      <NavigationContainer>
+        <App />
+      </NavigationContainer>,
     );
+
+    // Wait for tabs to be available
+    await waitFor(() => {
+      expect(screen.getByText("Add Destinations")).toBeTruthy();
+      expect(screen.getByText("Destinations")).toBeTruthy();
+    });
 
     // Simulate tab navigation to Add Destinations
     fireEvent.press(screen.getByText("Add Destinations"));
