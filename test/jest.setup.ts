@@ -1,4 +1,11 @@
 import "@testing-library/jest-native/extend-expect";
+import { server } from "./mockApi/setup";
+import "dotenv/config";
+
+// Setup MSW
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
 
 // Mock AsyncStorage
 jest.mock("@react-native-async-storage/async-storage", () =>
