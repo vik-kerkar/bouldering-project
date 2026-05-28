@@ -6,10 +6,14 @@
       "coordinates": "Coordinates"
     },
     "searchPlaceholder": {
-      "destination": "Search destination name"
+      "destination": "Search destination name",
+      "coordinates": "Search coordinates"
     }
   },
   "destinationList": {
     "headline": "Climbing Destinations"
+  },
+  "errors": {
+    "validationMsg": "Incorrect format. Enter latitude and longitude. Example: 123.456, 777.543"
   }
 }

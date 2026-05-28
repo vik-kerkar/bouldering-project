@@ -23,4 +23,13 @@ export const typography = {
     fontSize: 15,
     color: colors.text,
   },
+  alternateText: {
+    fontFamily: "Manrope-Regular",
+    fontSize: 12,
+  },
+  errorText: {
+    fontFamily: "Manrope-Regular",
+    fontSize: 14,
+    color: colors.error,
+  },
 };

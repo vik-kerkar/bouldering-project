@@ -12,6 +12,7 @@ export default function RootLayout() {
     "Poppins-Medium": require("../assets/fonts/Poppins-Medium.otf"),
     "Poppins-SemiBold": require("../assets/fonts/Poppins-SemiBold.otf"),
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.otf"),
+    "Manrope-Regular": require("../assets/fonts/Manrope-Regular.ttf"),
   });
 
   useEffect(() => {
