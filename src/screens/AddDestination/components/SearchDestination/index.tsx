@@ -1,37 +1,48 @@
-import {
-  View,
-  TextInput,
-  FlatList,
-  Text,
-  TouchableOpacity,
-} from "react-native";
+import { View, FlatList, Text, Pressable } from "react-native";
 import { useEffect, useMemo, useState } from "react";
+
 import { SearchIcon } from "@/assets/icons";
 import { colors } from "@/src/theme";
-import styles from "./styles";
 import strings from "@/src/constants/strings.json";
-import { useSearch, validateCoordinates } from "./useSearch";
-import { Place, SearchMode } from "./types";
-import { pickPlaces, renderSearchStatusIcon } from "./module";
-import { delay } from "@/src/utils";
+import Input from "@/src/components/Input";
+
+import styles from "./styles";
+import { useFindDestinations } from "../../apiHooks/useFindDestination";
+import { Place, SearchMode } from "../../types";
+import {
+  pickPlaces,
+  renderSearchStatusIcon,
+  validateCoordinates,
+} from "./module";
+
+import { useAddDestinationStore } from "../../state";
 
 interface Props {
   mode: SearchMode;
-  dispatchPlace: (place: Place | null) => void;
+  showAutoComplete?: boolean;
 }
 
-const SearchDestination = ({ mode, dispatchPlace }: Props) => {
+const SearchDestination = ({ mode, showAutoComplete }: Props) => {
   const [query, setQuery] = useState("");
-  const [isFocused, setIsFocused] = useState(false);
   const [validationError, setValidationError] = useState<boolean | null>(null);
 
-  const { data, error } = useSearch(query, mode);
+  const { data, error } = useFindDestinations(query, mode);
+
+  const setShowAutocomplete = useAddDestinationStore(
+    (state) => state.setShowAutocomplete,
+  );
+
+  const selectPlace = useAddDestinationStore((state) => state.selectPlace);
+
+  const newDestination = useAddDestinationStore(
+    (state) => state.newDestination,
+  );
 
   const places: Place[] = useMemo(() => pickPlaces(data) || [], [data]);
 
   const showSearchResults =
     mode === SearchMode.Destinations &&
-    isFocused &&
+    showAutoComplete &&
     places &&
     places.length > 0;
 
@@ -41,13 +52,12 @@ const SearchDestination = ({ mode, dispatchPlace }: Props) => {
       : strings.addDestination.searchPlaceholder.coordinates;
 
   const onChangeText = (text: string) => {
+    setShowAutocomplete(true);
     setQuery(text);
-    dispatchPlace(null); //r clear the found place because we are restarting search
+    selectPlace(null); //clear the SELECTED place because we are restarting the search
 
     if (mode === SearchMode.Coordinates) {
-      // Validate coordinates format: "lat, lon" or "lat lon"
       if (!validateCoordinates(text)) {
-        // Show error message or handle invalid format
         setValidationError(true);
         return;
       }
@@ -66,17 +76,16 @@ const SearchDestination = ({ mode, dispatchPlace }: Props) => {
         width={18}
         height={18}
         fill={colors.primary1}
-        style={{ alignSelf: "center" }}
+        style={styles.searchIcon}
       />
-      <TextInput
-        style={styles.searchInput}
+      <Input
         placeholder={placeholderText}
-        placeholderTextColor={colors.neutral4}
         onChangeText={onChangeText}
         value={query}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => delay(() => setIsFocused(false), 200)}
+        onFocus={() => setShowAutocomplete(true)}
         underlineColorAndroid="transparent"
+        style={styles.searchInput}
+        editable={!newDestination}
       />
       {mode === SearchMode.Coordinates
         ? renderSearchStatusIcon(error, places)
@@ -94,18 +103,16 @@ const SearchDestination = ({ mode, dispatchPlace }: Props) => {
   const renderSearchResults = () => {
     if (!showSearchResults) return null;
     return (
-      <View
-        style={{ position: "relative", top: -13, width: "90%", zIndex: 100 }}
-      >
+      <View style={styles.autoCompleteWrapper}>
         <View style={styles.autoCompleteContainer}>
           <FlatList
             data={places}
             renderItem={({ item }) => (
-              <TouchableOpacity
+              <Pressable
                 onPress={() => {
-                  dispatchPlace(item); // when a item is selected, update it as the found place
+                  selectPlace(item); // select the place as a new destination to be added
                   setQuery(`${item.name}, ${item.state}, ${item.country}`);
-                  setIsFocused(false);
+                  setShowAutocomplete(false);
                 }}
               >
                 <View style={styles.autoCompleteItem}>
@@ -117,7 +124,7 @@ const SearchDestination = ({ mode, dispatchPlace }: Props) => {
                     ]}
                   >{`${item.state}, ${item.country}`}</Text>
                 </View>
-              </TouchableOpacity>
+              </Pressable>
             )}
             keyExtractor={(item) => item.id}
           />
@@ -127,22 +134,22 @@ const SearchDestination = ({ mode, dispatchPlace }: Props) => {
   };
 
   useEffect(() => {
-    // When coordinates are found, dispatch the place
+    // When coordinates are found, select the place
     if (mode === SearchMode.Coordinates) {
       if (places.length > 0) {
-        dispatchPlace(places[0]); // update the found place
+        selectPlace(places[0]); // select the place as a new destination to be added
       } else if (validationError || places?.length === 0) {
-        dispatchPlace(null); // clear the found place
+        selectPlace(null); // clear the selected place
       }
     }
-  }, [mode, places, dispatchPlace, validationError]);
+  }, [mode, places, selectPlace, validationError]);
 
   return (
-    <>
+    <View style={styles.container}>
       {renderSearchBox()}
       {renderValidationError()}
       {renderSearchResults()}
-    </>
+    </View>
   );
 };
 

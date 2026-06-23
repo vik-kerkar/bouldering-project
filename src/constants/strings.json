@@ -8,12 +8,33 @@
     "searchPlaceholder": {
       "destination": "Search destination name",
       "coordinates": "Search coordinates"
+    },
+    "locationDetails": {
+      "title": "Location Details"
+    },
+    "destinationExists": "Destination already exists",
+    "locationForm": {
+      "nearestTown": "Nearest Town/City",
+      "nearestTownPlaceholder": "Enter the nearest town or city",
+      "describeLocation": "Describe the location",
+      "descriptionPlaceholder": "Write a brief summary including rock type, topography, climbing style and more",
+      "howToGetThere": "How to get there?",
+      "getTherePlaceholder": "Write directions or key landmarks",
+      "bestTimeToClimb": "Best time to climb",
+      "bestTimePlaceholder": "Mention seasonal variations, weather considerations, and access restrictions",
+      "destinationName": "Destination Name",
+      "destinationNamePlaceholder": "Enter the destination name"
+    },
+    "uploadPhotos": {
+      "title": "Upload Photos",
+      "validationError": "Please select at least one image"
     }
   },
   "destinationList": {
     "headline": "Climbing Destinations"
   },
   "errors": {
-    "validationMsg": "Incorrect format. Enter latitude and longitude. Example: 123.456, 777.543"
+    "validationMsg": "Incorrect format. Enter latitude and longitude. Example: 123.456, 777.543",
+    "requiredMsg": "This field is required"
   }
 }

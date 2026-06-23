@@ -1,6 +1,6 @@
 import React from "react";
 import { Text, View, Image } from "react-native";
-import { IDestination } from "../../screens/DestinationList/types";
+import { IDestination } from "../../types";
 import styles from "./styles";
 
 const DestinationCard = React.memo(function Destination(props: IDestination) {

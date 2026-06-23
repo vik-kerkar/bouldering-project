@@ -11,6 +11,7 @@ export const colors = {
 
   // Secondary Colors
   secondary4: "#F3DAB1",
+  secondary2: "#F4BC43",
 
   // tertiary colors
   tertiary1: "#3F475E",
@@ -26,7 +27,7 @@ export const colors = {
   // Accent Colors
   accent: "#FF6B35", // Orange
   success: "#4CAF50", // Green
-  warning: "#FF9800", // Orange
+  warning: "#FCBA90", // Orange
   error: "#E63C26", // Red
 
   // UI Elements

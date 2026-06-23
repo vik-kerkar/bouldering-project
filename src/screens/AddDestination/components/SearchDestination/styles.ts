@@ -3,32 +3,39 @@ import { colors } from "@/src/theme";
 import { typography } from "@/src/theme/typography";
 
 const styles = StyleSheet.create({
+  container: {
+    width: "100%",
+    marginVertical: 10,
+    alignItems: "stretch",
+  },
   searchContainer: {
     flexDirection: "row",
     justifyContent: "flex-start",
-    gap: 8,
-    marginTop: 16,
-    paddingHorizontal: 16,
     backgroundColor: colors.primary5,
-    width: "90%",
-    height: 44,
     borderRadius: 10,
   },
+  searchIcon: {
+    alignSelf: "center",
+    marginLeft: 12,
+  },
   searchInput: {
-    ...typography.bodyText,
-    color: colors.text,
-    borderWidth: 0,
-    width: "75%",
-    borderColor: "transparent",
+    flexGrow: 1,
+    height: 44,
   },
   searchInputError: {
     borderColor: colors.error,
     borderWidth: 1,
   },
+  autoCompleteWrapper: {
+    position: "relative",
+    top: -13,
+    zIndex: 100,
+    width: "100%",
+  },
   autoCompleteContainer: {
     backgroundColor: colors.primary5,
     width: "100%",
-    paddingHorizontal: 40,
+    paddingLeft: 40,
     paddingVertical: 16,
     borderRadius: 10,
     position: "absolute",
@@ -52,6 +59,7 @@ const styles = StyleSheet.create({
   coordinatesIcon: {
     alignSelf: "center",
     marginLeft: "auto",
+    marginRight: 6,
   },
 });
 
