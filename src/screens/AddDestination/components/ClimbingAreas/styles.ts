@@ -12,6 +12,62 @@ const styles = StyleSheet.create({
     marginBlockEnd: 24,
     alignSelf: "center",
   },
+  marker: {
+    ...typography.markerText,
+  },
+  newAreaMarker: {
+    backgroundColor: "#F4BC43",
+    width: 23,
+    height: 23,
+    opacity: 0.7,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderStyle: "solid",
+    borderColor: "#eb6315",
+  },
+  areaMarker: {
+    backgroundColor: "#2D7E33",
+    width: 23,
+    height: 23,
+    opacity: 0.8,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderStyle: "solid",
+    borderColor: "#043001",
+  },
+  buttonContainer: {
+    marginBlockStart: 20,
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    gap: 20,
+  },
+  formContainer: {
+    borderWidth: 1,
+    borderColor: colors.neutral3,
+    paddingVertical: 30,
+    paddingHorizontal: 20,
+    marginBlockStart: 20,
+    gap: 30,
+  },
+  areaContainer: {
+    marginVertical: 30,
+    borderWidth: 1,
+    borderColor: colors.neutral3,
+    padding: 15,
+    gap: 10,
+  },
+  areaTitle: {
+    ...typography.heading3,
+    color: colors.primary3,
+  },
+  areaLatLong: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  areaText: {
+    ...typography.bodyText,
+  },
 });
 
 export default styles;

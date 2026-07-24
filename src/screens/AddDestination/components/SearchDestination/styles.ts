@@ -20,7 +20,11 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flexGrow: 1,
-    height: 44,
+    flex: 1,
+    height: 50,
+  },
+  searchInputDisabled: {
+    backgroundColor: colors.primary6,
   },
   searchInputError: {
     borderColor: colors.error,
@@ -54,7 +58,7 @@ const styles = StyleSheet.create({
     ...typography.errorText,
     alignSelf: "flex-start",
     marginBlockStart: 8,
-    paddingLeft: 36,
+    paddingLeft: 10,
   },
   coordinatesIcon: {
     alignSelf: "center",

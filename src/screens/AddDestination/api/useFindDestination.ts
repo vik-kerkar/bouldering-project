@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "@/src/hooks/useDebounce";
 import { SearchMode } from "../types";
-import { validateCoordinates } from "../components/SearchDestination/module";
+import { validateCoordinates } from "../module";
 
 export const useFindDestinations = (query: string, mode: SearchMode) => {
   const url =
@@ -28,6 +28,7 @@ export const useFindDestinations = (query: string, mode: SearchMode) => {
         );
       } else {
         // Coordinates mode
+
         // validate the query
         if (!validateCoordinates(query)) {
           return null;
@@ -36,7 +37,7 @@ export const useFindDestinations = (query: string, mode: SearchMode) => {
         const [lat, long] = query.replace(/\s/g, "").split(",");
 
         response = await fetch(
-          `${url}?lat=${lat}&lon=${long}&apiKey=${apiKey}&type=city`,
+          `${url}?lat=${lat}&lon=${long}&apiKey=${apiKey}`,
         );
       }
 

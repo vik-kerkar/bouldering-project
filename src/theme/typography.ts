@@ -13,10 +13,20 @@ export const typography = {
     fontSize: 32,
     letterSpacing: 1,
   },
+  heading3: {
+    fontFamily: "PramukhRounded-Semibold",
+    fontSize: 27,
+    letterSpacing: 1.5,
+  },
   bodyText: {
     fontFamily: "Poppins-Light",
     fontSize: 15,
     color: colors.text,
+  },
+  markerText: {
+    fontFamily: "Poppins-Light",
+    fontSize: 12,
+    color: colors.neutral5,
   },
   linkText: {
     fontFamily: "Poppins-Medium",

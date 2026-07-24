@@ -26,6 +26,7 @@ module.exports = {
     "@typescript-eslint/no-empty-function": "warn",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
+    "import/namespace": "off",
   },
   env: {
     jest: true,

@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "gray",
     borderRadius: 5,
-    padding: 10,
+    padding: 25,
     borderStyle: "dashed",
     gap: 8,
     marginBlockEnd: 32,
@@ -28,20 +28,15 @@ const styles = StyleSheet.create({
   label: {
     ...typography.bodyText,
   },
-  cameraButton: {
-    backgroundColor: colors.secondary2,
-    padding: 12,
-    borderRadius: 8,
-  },
-  image: { width: 90, height: 90, margin: 6, borderRadius: 6 },
+  image: { width: 130, height: 130, margin: 10, borderRadius: 6 },
   defaultImage: {
     borderColor: "#00C3D0",
     borderWidth: 2,
   },
   deleteIcon: {
     position: "absolute",
-    top: 8,
-    right: 8,
+    top: 12,
+    right: 12,
   },
   validationError: {
     ...typography.bodyText,

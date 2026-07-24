@@ -12,7 +12,7 @@
     "locationDetails": {
       "title": "Location Details"
     },
-    "destinationExists": "Destination already exists",
+    "destinationExists": "Destination \"{{name}}\" already exists",
     "locationForm": {
       "nearestTown": "Nearest Town/City",
       "nearestTownPlaceholder": "Enter the nearest town or city",
@@ -28,13 +28,25 @@
     "uploadPhotos": {
       "title": "Upload Photos",
       "validationError": "Please select at least one image"
+    },
+    "climbingAreas": {
+      "title": "Climbing Areas",
+      "buttonText": "Add Climbing Area",
+      "areaNamePlaceholder": "Enter the area name",
+      "latLongPlaceholder": "Select or enter Lat and Long",
+      "areaDescriptionPlaceholder": "Describe the climbing area"
     }
   },
   "destinationList": {
     "headline": "Climbing Destinations"
   },
   "errors": {
-    "validationMsg": "Incorrect format. Enter latitude and longitude. Example: 123.456, 777.543",
-    "requiredMsg": "This field is required"
+    "latLongInvalidMsg": "Invalid coordinates format",
+    "latLongOutOfRange": "Area must be within 100km from destination",
+    "requiredMsg": "This field is required",
+    "storageApi": {
+      "name": "StorageApiError",
+      "message": "Upload failed"
+    }
   }
 }

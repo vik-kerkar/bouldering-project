@@ -1,21 +1,19 @@
 import { View, FlatList, Text, Pressable } from "react-native";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 
 import { SearchIcon } from "@/assets/icons";
 import { colors } from "@/src/theme";
 import strings from "@/src/constants/strings.json";
-import Input from "@/src/components/Input";
+import { Input } from "@/src/components";
 
 import styles from "./styles";
-import { useFindDestinations } from "../../apiHooks/useFindDestination";
+import { useFindDestinations } from "../../api/useFindDestination";
 import { Place, SearchMode } from "../../types";
-import {
-  pickPlaces,
-  renderSearchStatusIcon,
-  validateCoordinates,
-} from "./module";
+import { pickPlaces, renderSearchStatusIcon } from "./module";
+import { validateCoordinates } from "../../module";
 
 import { useAddDestinationStore } from "../../state";
+import { useFocusEffect } from "@react-navigation/native";
 
 interface Props {
   mode: SearchMode;
@@ -24,7 +22,7 @@ interface Props {
 
 const SearchDestination = ({ mode, showAutoComplete }: Props) => {
   const [query, setQuery] = useState("");
-  const [validationError, setValidationError] = useState<boolean | null>(null);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const { data, error } = useFindDestinations(query, mode);
 
@@ -57,8 +55,9 @@ const SearchDestination = ({ mode, showAutoComplete }: Props) => {
     selectPlace(null); //clear the SELECTED place because we are restarting the search
 
     if (mode === SearchMode.Coordinates) {
-      if (!validateCoordinates(text)) {
-        setValidationError(true);
+      const result = validateCoordinates(text);
+      if (typeof result === "string") {
+        setValidationError(result);
         return;
       }
       setValidationError(null);
@@ -70,6 +69,7 @@ const SearchDestination = ({ mode, showAutoComplete }: Props) => {
       style={[
         styles.searchContainer,
         validationError ? styles.searchInputError : {},
+        newDestination && styles.searchInputDisabled,
       ]}
     >
       <SearchIcon
@@ -94,10 +94,9 @@ const SearchDestination = ({ mode, showAutoComplete }: Props) => {
   );
 
   const renderValidationError = () => {
-    if (!validationError) return null;
-    return (
-      <Text style={styles.validationError}>{strings.errors.validationMsg}</Text>
-    );
+    const errorMsg = validationError || error?.message;
+    if (!errorMsg) return null;
+    return <Text style={styles.validationError}>{errorMsg}</Text>;
   };
 
   const renderSearchResults = () => {
@@ -143,6 +142,14 @@ const SearchDestination = ({ mode, showAutoComplete }: Props) => {
       }
     }
   }, [mode, places, selectPlace, validationError]);
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        setQuery("");
+      };
+    }, []),
+  );
 
   return (
     <View style={styles.container}>

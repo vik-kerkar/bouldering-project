@@ -8,16 +8,16 @@ const useCheckDestinationExists = (
   return useQuery({
     queryKey: [placeId],
     queryFn: async () => {
-      const response = await supabase
+      const { data, error } = await supabase
         .from("Destination")
         .select()
-        .eq("place_id", placeId)
+        .eq("placeId", placeId)
         .limit(1);
 
-      if (response.error) {
-        throw new Error(response.error?.message || "Error");
+      if (error) {
+        return false;
       }
-      return response.data?.length > 0;
+      return data?.length > 0;
     },
   });
 };

@@ -1,17 +1,18 @@
-import { View, Text, ScrollView, Pressable, Image } from "react-native";
-import styles from "./styles";
-import commonStyles from "../../styles";
+import React, { useContext } from "react";
+import { View, Text, ScrollView } from "react-native";
+import { useForm } from "react-hook-form";
+
+import { FormInput, ImageButton, Spacer } from "@/src/components";
+
+import { StepContext } from "../../context/stepContext";
+
+import { useAddDestinationStore } from "../../state";
+
 import Strings from "@/src/constants/strings.json";
 
 import { LocationData, SearchMode } from "../../types";
-
-import { useForm } from "react-hook-form";
-
-import FormInput from "@/src/components/FormInput";
-
-import { StepContext } from "../../context/stepContext";
-import React, { useContext } from "react";
-import { useAddDestinationStore } from "../../state";
+import styles from "./styles";
+import commonStyles from "../../styles";
 
 type FormData = {
   nearestTown: string;
@@ -45,10 +46,10 @@ const LocationDetails = React.memo(
     } = useForm<FormData>({
       mode: "onBlur",
       defaultValues: {
-        nearestTown: newDestination?.nearest_town_city || "",
+        nearestTown: newDestination?.nearestTownCity || "",
         describeLocation: newDestination?.description || "",
-        howToGetThere: newDestination?.getting_there || "",
-        bestTimeToClimb: newDestination?.misc_info || "",
+        howToGetThere: newDestination?.gettingThere || "",
+        bestTimeToClimb: newDestination?.miscInfo || "",
         destinationName: newDestination?.name || selectedPlace?.name || "",
       },
     });
@@ -56,13 +57,13 @@ const LocationDetails = React.memo(
     const onSubmit = async (data: FormData) => {
       const { id, name, ...placeFields } = selectedPlace || {};
       const locationData: LocationData = {
-        place_id: id || "",
+        placeId: id || "",
         ...placeFields,
         name: data.destinationName || name,
-        nearest_town_city: data.nearestTown,
+        nearestTownCity: data.nearestTown,
         description: data.describeLocation,
-        getting_there: data.howToGetThere,
-        misc_info: data.bestTimeToClimb,
+        gettingThere: data.howToGetThere,
+        miscInfo: data.bestTimeToClimb,
       } as LocationData;
 
       setNewDestination(locationData);
@@ -141,36 +142,20 @@ const LocationDetails = React.memo(
           />
         </View>
         <View style={commonStyles.navButtonContainer}>
-          <Pressable
-            style={commonStyles.navButton}
+          <ImageButton
             testID="location-details-reset-button"
             onPress={() => reset()}
-          >
-            <Image
-              source={require("@/assets/images/nav-button-reset.png")}
-              style={commonStyles.navButtonImage}
-              resizeMode="contain"
-            />
-          </Pressable>
-          <Pressable
-            style={commonStyles.navButton}
+            type="reset"
+          />
+          <ImageButton
             testID="location-details-next-button"
             onPress={handleSubmit(onSubmit)}
             disabled={!isValid}
-          >
-            <Image
-              source={
-                isValid
-                  ? require("@/assets/images/nav-button-next.png")
-                  : require("@/assets/images/nav-button-disabled.png")
-              }
-              style={commonStyles.navButtonImage}
-              resizeMode="contain"
-            />
-          </Pressable>
+            type={isValid ? "next" : "disabled"}
+          />
         </View>
 
-        <View style={commonStyles.spacer}></View>
+        <Spacer height={100} />
       </ScrollView>
     );
   },

@@ -9,4 +9,22 @@ const globalStyles = StyleSheet.create({
   },
 });
 
+export const appStyles = StyleSheet.create({
+  icon: {
+    fontSize: 24,
+  },
+  tabContainer: {
+    backgroundColor: colors.background,
+    flex: 1,
+    paddingHorizontal: 30,
+    alignItems: "stretch",
+    paddingTop: 30,
+  },
+  stackContainer: {
+    backgroundColor: colors.background,
+    flex: 1,
+    alignItems: "stretch",
+  },
+});
+
 export default globalStyles;

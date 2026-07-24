@@ -1,60 +1,56 @@
-import React, { useEffect, useReducer } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import supabase from "./supabase";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 import DestinationList from "../src/screens/DestinationList";
-import { IDestination } from "../src/screens/DestinationList/types";
 import { colors } from "@/src/theme";
 import AddDestination from "@/src/screens/AddDestination";
+import DestinationDetails from "@/src/screens/DestinationDetails";
 
-interface AppState {
-  destinations?: IDestination[];
-}
+import { useAddDestinationStore } from "@/src/screens/AddDestination/state";
 
-interface AppAction {
-  type: "SET_DESTINATIONS";
-  payload: IDestination[];
-}
+import { appStyles } from "@/src/theme/globalStyles";
 
-const MyTabs = createBottomTabNavigator();
+import { confirmUndo } from "@/src/utils";
 
-const styles = StyleSheet.create({
-  icon: {
-    fontSize: 24,
-  },
-  container: {
-    backgroundColor: colors.background,
-    flex: 1,
-    paddingHorizontal: 40,
-    alignItems: "stretch",
-    paddingTop: 30,
-  },
-});
+import {
+  RootTabParamList,
+  DestinationsStackParamList,
+  Navigation,
+  TabPressEvent,
+} from "./types";
+
+const MyTabs = createBottomTabNavigator<RootTabParamList>();
+const Stack = createNativeStackNavigator<DestinationsStackParamList>();
 
 export default function App() {
-  const reducer = (state: AppState, action: AppAction): AppState => {
-    switch (action.type) {
-      case "SET_DESTINATIONS":
-        return { ...state, destinations: action.payload };
-      default:
-        return state;
-    }
-  };
-  const [state, dispatch] = useReducer(reducer, {});
+  const selectedPlace = useAddDestinationStore((state) => state.selectedPlace);
+  const resetState = useAddDestinationStore((state) => state.reset);
 
-  useEffect(() => {
-    async function getDestinations() {
-      const { data, error } = await supabase.from("Destination").select("*");
-      if (error) {
-        console.log("Error", error);
+  const handleTabEvents = ({ navigation }: Navigation) => ({
+    tabPress: async (e: TabPressEvent) => {
+      const state = navigation.getState();
+
+      const currentRoute = state.routes[state.index];
+      const targetKey = e.target;
+
+      if (currentRoute.name === "Add Destination" && selectedPlace) {
+        e.preventDefault();
+
+        const targetRoute = state.routes.find(
+          (route) => route.key === targetKey,
+        );
+
+        const yes = await confirmUndo();
+        if (!yes) {
+          return;
+        }
+        resetState();
+        navigation.navigate(targetRoute!.name as never);
       }
-      dispatch({ type: "SET_DESTINATIONS", payload: data as IDestination[] });
-    }
-
-    getDestinations();
-  }, []);
+    },
+  });
 
   return (
     <>
@@ -62,7 +58,7 @@ export default function App() {
       <MyTabs.Navigator
         initialRouteName="Destinations"
         screenLayout={({ children }) => (
-          <View style={styles.container}>{children}</View>
+          <View style={appStyles.tabContainer}>{children}</View>
         )}
         screenOptions={{
           tabBarStyle: {
@@ -70,25 +66,43 @@ export default function App() {
             paddingVertical: 10,
           },
         }}
+        screenListeners={handleTabEvents}
       >
         <MyTabs.Screen
           name="Destinations"
           options={{
             headerShown: false,
-            tabBarIcon: () => <Text style={styles.icon}>🧗‍♀️</Text>,
+            tabBarIcon: () => <Text style={appStyles.icon}>🧗‍♀️</Text>,
+            tabBarButtonTestID: "destinations-tab",
+            popToTopOnBlur: true,
+            tabBarActiveBackgroundColor: colors.activeTabBackground,
           }}
         >
           {() => (
-            <DestinationList
-              destinations={state.destinations as IDestination[]}
-            />
+            <Stack.Navigator
+              screenOptions={{ headerShown: false }}
+              screenLayout={({ children }) => (
+                <View style={appStyles.stackContainer}>{children}</View>
+              )}
+            >
+              <Stack.Screen
+                name="DestinationList"
+                component={DestinationList}
+              />
+              <Stack.Screen
+                name="DestinationDetails"
+                component={DestinationDetails}
+              />
+            </Stack.Navigator>
           )}
         </MyTabs.Screen>
         <MyTabs.Screen
-          name="Add Destinations"
+          name="Add Destination"
           options={{
             headerShown: false,
-            tabBarIcon: () => <Text style={styles.icon}>⛰️</Text>,
+            tabBarIcon: () => <Text style={appStyles.icon}>⛰️</Text>,
+            tabBarButtonTestID: "add-destination-tab",
+            tabBarActiveBackgroundColor: colors.activeTabBackground,
           }}
         >
           {() => <AddDestination />}

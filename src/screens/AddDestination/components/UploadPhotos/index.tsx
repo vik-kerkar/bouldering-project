@@ -1,9 +1,9 @@
 import {
   Pressable,
-  ScrollView,
   Text,
   Image,
   Alert,
+  ScrollView,
   View,
   FlatList,
 } from "react-native";
@@ -22,6 +22,8 @@ import { UploadedImage } from "../../types";
 
 import { useAddDestinationStore } from "../../state";
 
+import { ImageButton, Button, Spacer } from "@/src/components";
+
 const UploadPhotos = () => {
   const { step, setStep } = useContext(StepContext);
   const [validationError, setValidationError] = useState<null | string>(null);
@@ -39,6 +41,7 @@ const UploadPhotos = () => {
       fileName: asset.fileName || "",
       fileSize: asset.fileSize || 0,
       default: !images?.length && index === 0 ? true : false,
+      mimeType: asset.mimeType || "image/jpeg",
     }));
   };
 
@@ -62,6 +65,7 @@ const UploadPhotos = () => {
     if (!result.canceled) {
       const newImages: UploadedImage[] = getImagesFromAssets(result.assets);
       setImages([...(images || []), ...newImages]);
+      setValidationError(null);
     }
   };
 
@@ -88,6 +92,7 @@ const UploadPhotos = () => {
     if (!result.canceled) {
       const newImages: UploadedImage[] = getImagesFromAssets(result.assets);
       setImages([...(images || []), ...newImages]);
+      setValidationError(null);
     }
   };
 
@@ -105,6 +110,16 @@ const UploadPhotos = () => {
     );
     setImages(imagesAfterDelete!);
   };
+
+  const handlePrevPress = () => setStep(step - 1);
+
+  const handleNextPress = () => {
+    if (!images || images?.length === 0) {
+      setValidationError(Strings.addDestination.uploadPhotos.validationError);
+      return;
+    }
+    setStep(step + 1);
+  };
   return (
     <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.container}>
       <Text style={styles.title}>
@@ -114,84 +129,63 @@ const UploadPhotos = () => {
         <PhotoIcon />
         <Text style={styles.label}>Tap to upload</Text>
         <Text style={styles.label}>OR</Text>
-        <Pressable style={styles.cameraButton} onPress={pickFromCamera}>
-          <Text style={styles.label}>Open Camera</Text>
-        </Pressable>
+        <Button label="Open Camera" type="secondary" onPress={pickFromCamera} />
       </Pressable>
-      {validationError && !images && (
+      {validationError && (
         <Text style={styles.validationError}>{validationError}</Text>
       )}
       {images && (
-        <ScrollView horizontal>
-          <FlatList
-            data={images}
-            numColumns={3}
-            keyExtractor={(item) => item.assetId}
-            style={{ position: "relative" }}
-            renderItem={({ item, index }) => (
-              <Pressable
-                key={item.assetId}
-                onPress={() => selectDefaultImage(index)}
-              >
-                <>
-                  <Image
-                    source={{ uri: item.uri }}
-                    style={[
-                      styles.image,
-                      item.default ? styles.defaultImage : {},
-                    ]}
-                    accessibilityLabel="Destination Image"
-                    {...(item.default
-                      ? { accessibilityHint: "Cover Image" }
-                      : {})}
-                  />
-                  <Pressable
-                    style={styles.deleteIcon}
-                    onPress={() => removeImage(item.assetId)}
-                    testID={`delete-image-${item.assetId}`}
-                  >
-                    <CloseIcon fill="#000" stroke="#000" />
-                  </Pressable>
-                </>
-              </Pressable>
-            )}
-          />
-        </ScrollView>
+        <FlatList
+          data={images}
+          numColumns={2}
+          keyExtractor={(item) => item.assetId}
+          scrollEnabled={false}
+          style={{
+            position: "relative",
+          }}
+          renderItem={({ item, index }) => (
+            <Pressable
+              key={item.assetId}
+              onPress={() => selectDefaultImage(index)}
+            >
+              <>
+                <Image
+                  source={{ uri: item.uri }}
+                  style={[
+                    styles.image,
+                    item.default ? styles.defaultImage : {},
+                  ]}
+                  accessibilityLabel="Destination Image"
+                  {...(item.default
+                    ? { accessibilityHint: "Cover Image" }
+                    : {})}
+                />
+                <Pressable
+                  style={styles.deleteIcon}
+                  onPress={() => removeImage(item.assetId)}
+                  testID={`delete-image-${item.assetId}`}
+                >
+                  <CloseIcon fill="#000" stroke="#000" />
+                </Pressable>
+              </>
+            </Pressable>
+          )}
+        />
       )}
       <View style={commonStyles.navButtonContainer}>
-        <Pressable
-          style={commonStyles.navButton}
+        <ImageButton
           testID="upload-photos-prev-button"
-          onPress={() => setStep(step - 1)}
-        >
-          <Image
-            source={require("@/assets/images/nav-button-prev.png")}
-            style={[commonStyles.navButtonImage]}
-            resizeMode="contain"
-          />
-        </Pressable>
-        <Pressable
-          style={commonStyles.navButton}
+          onPress={handlePrevPress}
+          type="previous"
+        />
+
+        <ImageButton
           testID="upload-photos-next-button"
-          onPress={() => {
-            if (images && images?.length > 0) {
-              setValidationError("");
-              setStep(step + 1);
-            } else {
-              setValidationError(
-                Strings.addDestination.uploadPhotos.validationError,
-              );
-            }
-          }}
-        >
-          <Image
-            source={require("@/assets/images/nav-button-next.png")}
-            style={commonStyles.navButtonImage}
-            resizeMode="contain"
-          />
-        </Pressable>
+          onPress={handleNextPress}
+          type="next"
+        />
       </View>
-      <View style={commonStyles.spacer} />
+      <Spacer height={100} />
     </ScrollView>
   );
 };

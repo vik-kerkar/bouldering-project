@@ -8,19 +8,7 @@ const styles = StyleSheet.create({
   navButtonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBlockStart: 16,
-  },
-  navButton: {
-    alignSelf: "center",
-  },
-  navButtonPrev: {
-    transform: [{ scaleX: -1 }],
-  },
-  navButtonImage: {
-    width: 110,
-  },
-  spacer: {
-    height: 100,
+    marginBlockStart: 26,
   },
 });
 

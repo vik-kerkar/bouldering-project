@@ -43,8 +43,3 @@ export const renderSearchStatusIcon = (
     );
   }
 };
-
-export const validateCoordinates = (query: string) => {
-  const coordRegex = /^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/;
-  return coordRegex.test(query.trim());
-};

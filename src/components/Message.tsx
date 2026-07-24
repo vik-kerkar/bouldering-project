@@ -32,11 +32,15 @@ const styles = StyleSheet.create({
   },
 });
 
-const Message = () => {
+interface Props {
+  text: string;
+}
+
+const Message = ({ text }: Props) => {
   return (
     <View style={styles.container}>
       <WarningIcon />
-      <Text style={styles.message}>Destination already exists</Text>
+      <Text style={styles.message}>{text}</Text>
       <CloseIcon style={styles.closeIcon} />
     </View>
   );

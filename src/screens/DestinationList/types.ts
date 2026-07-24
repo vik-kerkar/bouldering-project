@@ -2,7 +2,9 @@ export interface IDestination {
   id: number;
   name: string;
   description: string;
-  url: string;
+  country: string;
+  imageUrls: string[];
+  defaultImgUrlIndex: number;
 }
 
 export interface IDestinationList {

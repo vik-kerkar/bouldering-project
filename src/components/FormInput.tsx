@@ -7,17 +7,22 @@ import {
   Path,
 } from "react-hook-form";
 
-import { Text } from "react-native";
+import { Text, GestureResponderEvent } from "react-native";
+import * as Icons from "@/assets/icons";
+
+import { typography } from "../theme";
 
 interface Props<T extends FieldValues> {
   name: Path<T>;
   control: Control<T>;
   rules?: RegisterOptions<T>;
-  label: string;
+  label?: string;
   placeholder: string;
   multiline?: boolean;
   numberOfLines?: number;
-  value?: string;
+  icon?: keyof typeof Icons;
+  disabled?: boolean;
+  onIconPress?: (e: GestureResponderEvent) => void;
 }
 
 const FormInput = <T extends FieldValues>({
@@ -25,10 +30,8 @@ const FormInput = <T extends FieldValues>({
   control,
   rules,
   label,
-  placeholder,
-  multiline,
-  numberOfLines,
-  value,
+  disabled,
+  ...rest
 }: Props<T>) => {
   return (
     <>
@@ -43,14 +46,18 @@ const FormInput = <T extends FieldValues>({
           <>
             <Input
               label={label}
-              placeholder={placeholder}
+              value={value}
+              {...rest}
               onChangeText={onChange}
               onBlur={onBlur}
-              multiline={multiline}
-              numberOfLines={numberOfLines}
-              value={value}
+              editable={!disabled}
+              hasError={!!error}
             />
-            {error && <Text style={{ color: "red" }}>{error.message}</Text>}
+            {error && (
+              <Text style={{ ...typography.bodyText, color: "red" }}>
+                {error.message}
+              </Text>
+            )}
           </>
         )}
       />

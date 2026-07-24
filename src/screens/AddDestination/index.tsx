@@ -11,13 +11,13 @@ import {
   RadioGroup,
   ClimbingAreas,
 } from "./components";
-import Message from "@/src/components/Message";
+import { Snackbar } from "@/src/components";
 import { StepContext } from "./context/stepContext";
 import { useAddDestinationStore } from "./state";
 import { useShallow } from "zustand/react/shallow";
-import type { SearchState } from "./types";
-import useCheckDestinationExists from "./apiHooks/useCheckDestination";
-import { confirmUndo } from "@/src/utils/async";
+import type { SearchState } from "./state/types";
+import useCheckDestinationExists from "./api/useCheckDestination";
+import { confirmUndo, formatString } from "@/src/utils";
 
 const AddDestination = () => {
   const { searchMode, setSearchMode, showAutocomplete, setShowAutocomplete } =
@@ -30,21 +30,14 @@ const AddDestination = () => {
       })),
     );
 
-  const { selectedPlace, selectPlace } = useAddDestinationStore(
+  const { selectedPlace } = useAddDestinationStore(
     useShallow((state) => ({
       selectedPlace: state.selectedPlace,
       selectPlace: state.selectPlace,
     })),
   );
 
-  const setImages = useAddDestinationStore((state) => state.setImages);
-
-  const { newDestination, setNewDestination } = useAddDestinationStore(
-    useShallow((state) => ({
-      newDestination: state.newDestination,
-      setNewDestination: state.setNewDestination,
-    })),
-  );
+  const resetState = useAddDestinationStore((state) => state.reset);
 
   const { data: destinationExists } = useCheckDestinationExists(
     selectedPlace?.id || "",
@@ -53,6 +46,12 @@ const AddDestination = () => {
   const [step, setStep] = useState(1);
 
   const isEditing = selectedPlace && !destinationExists;
+
+  const switchSearchMode = (option: SearchMode) => {
+    resetState();
+    setStep(1);
+    setSearchMode(option as SearchMode);
+  };
 
   return (
     <Pressable
@@ -71,14 +70,7 @@ const AddDestination = () => {
               return;
             }
           }
-          if (newDestination) {
-            // clear the new destination
-            setNewDestination(null);
-          }
-          selectPlace(null); // clear the selection
-          setImages(null); // clear the images
-          setStep(1);
-          setSearchMode(option as SearchMode);
+          switchSearchMode(option as SearchMode);
         }}
         options={[SearchMode.Destinations, SearchMode.Coordinates]}
       />
@@ -89,7 +81,12 @@ const AddDestination = () => {
       />
       {selectedPlace ? (
         !!destinationExists ? (
-          <Message />
+          <Snackbar
+            message={formatString(strings.addDestination.destinationExists, {
+              name: selectedPlace.name,
+            })}
+            visible={!!destinationExists}
+          />
         ) : (
           <StepContext value={{ step, setStep }}>
             <Stepper />

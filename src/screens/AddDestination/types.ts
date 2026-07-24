@@ -29,34 +29,17 @@ export enum SearchMode {
 }
 
 export interface LocationData extends Omit<Place, "id"> {
-  place_id: string;
-  nearest_town_city: string;
+  placeId: string;
+  nearestTownCity: string;
   description: string;
-  getting_there: string;
-  misc_info?: string;
-}
-
-export interface SearchState {
-  searchMode: SearchMode;
-  setSearchMode: (searchMode: SearchMode) => void;
-  showAutocomplete: boolean;
-  setShowAutocomplete: (show: boolean) => void;
-}
-
-export interface PlaceState {
-  selectedPlace: Place | null;
-  selectPlace: (place: Place | null) => void;
-  newDestination: NewDestination | null;
-  setNewDestination: (destination: NewDestination | null) => void;
-}
-
-export interface ImagesState {
-  images: UploadedImage[] | null;
-  setImages: (images: UploadedImage[] | null) => void;
+  gettingThere: string;
+  miscInfo?: string;
 }
 
 export interface NewDestination extends LocationData {
   url?: string;
+  defaultImgUrlIndex?: number;
+  imageUrls?: string[];
 }
 
 export type UploadedImage = {
@@ -65,4 +48,22 @@ export type UploadedImage = {
   uri: string;
   fileSize: number;
   default?: boolean;
+  mimeType: string;
 };
+
+export interface Coordinate {
+  latitude: number;
+  longitude: number;
+}
+
+export interface ClimbingArea extends Coordinate {
+  areaName: string;
+  areaDescription: string;
+}
+
+export type UploadFn = (
+  uri: string,
+  bucket: string,
+  path: string,
+  mimeType?: string,
+) => Promise<string>;

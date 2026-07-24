@@ -9,14 +9,28 @@ import {
   fireEvent,
 } from "@testing-library/react-native";
 import strings from "@/src/constants/strings.json";
-import { withQueryClient } from "@/test/utils";
+import { withQueryClient, withNavigator } from "@/test/utils";
 
 import * as utils from "@/src/utils/async";
+import { formatString } from "@/src/utils";
 
 import Strings from "@/src/constants/strings.json";
 import { useAddDestinationStore } from "./state";
 
 import * as ImagePicker from "expo-image-picker";
+
+import supabase, { StorageFileApi } from "@/app/supabase";
+
+import {
+  imagePickerResult,
+  medialLibraryPermissionResponse,
+} from "@/test/mockData";
+import {
+  ImagePickerResult,
+  MediaLibraryPermissionResponse,
+} from "expo-image-picker";
+
+const { addDestination } = strings;
 
 const getFormInputs = async () => ({
   nearestTownInput: await screen.findByPlaceholderText(
@@ -33,6 +47,46 @@ const getFormInputs = async () => ({
   ),
 });
 
+const mediaLibraryMock = () => {
+  const requestMediaLibraryPermissionsAsync = jest.mocked(
+    ImagePicker.requestMediaLibraryPermissionsAsync,
+  );
+
+  const launchImageLibraryAsync = jest.mocked(
+    ImagePicker.launchImageLibraryAsync,
+  );
+
+  return { requestMediaLibraryPermissionsAsync, launchImageLibraryAsync };
+};
+
+const getUploadFn = (throwError?: boolean) => {
+  const error = new Error("new row violates row-level security policy");
+  error.name = "StorageApiError";
+  const uploadFn = jest.fn().mockResolvedValue({
+    data: { path: "image.jpg" },
+    error: throwError ? error : null,
+  });
+
+  return uploadFn;
+};
+
+const mockSupabaseUpload = (uploadFn: () => object) => {
+  jest.spyOn(supabase.storage, "from").mockReturnValue({
+    upload: uploadFn,
+    getPublicUrl: jest.fn().mockReturnValue({
+      data: { publicUrl: "https://example.com/image.jpg" },
+    }),
+  } as StorageFileApi);
+};
+
+const mockNavigate = jest.fn();
+jest.mock("@react-navigation/native", () => ({
+  ...jest.requireActual("@react-navigation/native"),
+  useNavigation: jest.fn(() => ({
+    navigate: mockNavigate,
+  })),
+}));
+
 describe("AddDestination", () => {
   beforeEach(() => {
     useAddDestinationStore.setState(
@@ -41,11 +95,11 @@ describe("AddDestination", () => {
     );
   });
   it("should render", () => {
-    render(withQueryClient(<AddDestination />));
+    render(withQueryClient(withNavigator(<AddDestination />)));
     expect(screen.getByText(strings.addDestination.headline)).toBeTruthy();
   });
   it("should display radio buttons for Destinations and Coordinates", () => {
-    render(withQueryClient(<AddDestination />));
+    render(withQueryClient(withNavigator(<AddDestination />)));
     expect(
       screen.getByText(strings.addDestination.options.destinations),
     ).toBeTruthy();
@@ -65,7 +119,7 @@ describe("AddDestination", () => {
       jest.restoreAllMocks();
     });
     it("should display a search input", () => {
-      render(withQueryClient(<AddDestination />));
+      render(withQueryClient(withNavigator(<AddDestination />)));
       expect(
         screen.getByPlaceholderText(
           strings.addDestination.searchPlaceholder.destination,
@@ -74,7 +128,7 @@ describe("AddDestination", () => {
     });
 
     it("should allow the user to search for a destination", async () => {
-      render(withQueryClient(<AddDestination />));
+      render(withQueryClient(withNavigator(<AddDestination />)));
       const searchInput = screen.getByPlaceholderText(
         strings.addDestination.searchPlaceholder.destination,
       );
@@ -86,7 +140,7 @@ describe("AddDestination", () => {
     });
 
     it("should display a list of destinations, when a user types in the search input", async () => {
-      await render(withQueryClient(<AddDestination />));
+      await render(withQueryClient(withNavigator(<AddDestination />)));
       const searchInput = screen.getByPlaceholderText(
         strings.addDestination.searchPlaceholder.destination,
       );
@@ -103,7 +157,7 @@ describe("AddDestination", () => {
     });
 
     it("should hide the list of destinations, when the user focuses out of the search input", async () => {
-      await render(withQueryClient(<AddDestination />));
+      await render(withQueryClient(withNavigator(<AddDestination />)));
       const searchInput = screen.getByPlaceholderText(
         strings.addDestination.searchPlaceholder.destination,
       );
@@ -129,7 +183,7 @@ describe("AddDestination", () => {
     });
 
     it("should populate the destination name and show the stepper when a destination is selected", async () => {
-      await render(withQueryClient(<AddDestination />));
+      await render(withQueryClient(withNavigator(<AddDestination />)));
       const searchInput = screen.getByPlaceholderText(
         strings.addDestination.searchPlaceholder.destination,
       );
@@ -153,7 +207,7 @@ describe("AddDestination", () => {
     });
 
     it("should display a message if the selected destination already exists", async () => {
-      await render(withQueryClient(<AddDestination />));
+      await render(withQueryClient(withNavigator(<AddDestination />)));
       const searchInput = screen.getByPlaceholderText(
         strings.addDestination.searchPlaceholder.destination,
       );
@@ -175,13 +229,17 @@ describe("AddDestination", () => {
       expect(searchInput.props.value).toBe("Hampi, Karnataka, India");
       await waitFor(() => {
         expect(
-          screen.getByText(strings.addDestination.destinationExists),
+          screen.getByText(
+            formatString(strings.addDestination.destinationExists, {
+              name: "Hampi",
+            }),
+          ),
         ).toBeOnTheScreen();
       });
     });
 
     it("should hide the stepper when the selected destination is modified", async () => {
-      await render(withQueryClient(<AddDestination />));
+      await render(withQueryClient(withNavigator(<AddDestination />)));
       const searchInput = screen.getByPlaceholderText(
         strings.addDestination.searchPlaceholder.destination,
       );
@@ -208,7 +266,7 @@ describe("AddDestination", () => {
       expect(screen.queryByTestId("stepper")).not.toBeOnTheScreen();
     });
     it("should show the `Location Details` form when a destination is selected", async () => {
-      await render(withQueryClient(<AddDestination />));
+      await render(withQueryClient(withNavigator(<AddDestination />)));
       const searchInput = screen.getByPlaceholderText(
         strings.addDestination.searchPlaceholder.destination,
       );
@@ -231,7 +289,7 @@ describe("AddDestination", () => {
     });
 
     it("should be able to enter location details and proceed to the next step", async () => {
-      render(withQueryClient(<AddDestination />));
+      render(withQueryClient(withNavigator(<AddDestination />)));
       const searchInput = screen.getByPlaceholderText(
         strings.addDestination.searchPlaceholder.destination,
       );
@@ -252,24 +310,19 @@ describe("AddDestination", () => {
       expect(searchInput.props.value).toBe("Ravugodlu, Karnataka, India");
       expect(screen.getByText("Location Details")).toBeOnTheScreen();
 
-      const nearestTownInput = screen.getByPlaceholderText(
-        Strings.addDestination.locationForm.nearestTownPlaceholder,
-      );
+      const {
+        nearestTownInput,
+        descriptionInput,
+        getThereInput,
+        bestTimeInput,
+      } = await getFormInputs();
+
       await userEvent.type(nearestTownInput, "Test Town");
 
-      const descriptionInput = screen.getByPlaceholderText(
-        Strings.addDestination.locationForm.descriptionPlaceholder,
-      );
       await userEvent.type(descriptionInput, "Test description");
 
-      const getThereInput = screen.getByPlaceholderText(
-        Strings.addDestination.locationForm.getTherePlaceholder,
-      );
       await userEvent.type(getThereInput, "Test get there");
 
-      const bestTimeInput = screen.getByPlaceholderText(
-        Strings.addDestination.locationForm.bestTimePlaceholder,
-      );
       await userEvent.type(bestTimeInput, "Test best time");
 
       const nextButton = screen.getByTestId("location-details-next-button");
@@ -278,7 +331,7 @@ describe("AddDestination", () => {
     });
 
     it("should disable the search input after user enters location details and navigates to next step", async () => {
-      await render(withQueryClient(<AddDestination />));
+      await render(withQueryClient(withNavigator(<AddDestination />)));
       const destinationsRadio = screen.getByText(
         strings.addDestination.options.destinations,
       );
@@ -332,7 +385,7 @@ describe("AddDestination", () => {
     it("should receive a warning message when trying to navigate away without saving", async () => {
       const alertSpy = jest.spyOn(Alert, "alert");
 
-      render(withQueryClient(<AddDestination />));
+      render(withQueryClient(withNavigator(<AddDestination />)));
       const searchInput = screen.getByPlaceholderText(
         strings.addDestination.searchPlaceholder.destination,
       );
@@ -367,7 +420,7 @@ describe("AddDestination", () => {
         .spyOn(utils, "confirmUndo")
         .mockImplementation(() => Promise.resolve(true));
 
-      render(withQueryClient(<AddDestination />));
+      render(withQueryClient(withNavigator(<AddDestination />)));
       const searchInput = screen.getByPlaceholderText(
         strings.addDestination.searchPlaceholder.destination,
       );
@@ -399,7 +452,7 @@ describe("AddDestination", () => {
     });
 
     it("should be able to go back to the previous step and view the saved location details", async () => {
-      render(withQueryClient(<AddDestination />));
+      render(withQueryClient(withNavigator(<AddDestination />)));
 
       const searchInput = screen.getByPlaceholderText(
         strings.addDestination.searchPlaceholder.destination,
@@ -449,7 +502,7 @@ describe("AddDestination", () => {
       jest
         .spyOn(utils, "confirmUndo")
         .mockImplementation(() => Promise.resolve(true));
-      render(withQueryClient(<AddDestination />));
+      render(withQueryClient(withNavigator(<AddDestination />)));
       const searchInput = screen.getByPlaceholderText(
         strings.addDestination.searchPlaceholder.destination,
       );
@@ -502,42 +555,86 @@ describe("AddDestination", () => {
     });
 
     it("should be able to upload photos and proceed to the next step", async () => {
-      const requestMediaLibraryPermissionsAsync = jest.mocked(
-        ImagePicker.requestMediaLibraryPermissionsAsync,
+      const { requestMediaLibraryPermissionsAsync, launchImageLibraryAsync } =
+        mediaLibraryMock();
+
+      requestMediaLibraryPermissionsAsync.mockResolvedValue(
+        medialLibraryPermissionResponse as MediaLibraryPermissionResponse,
       );
 
-      requestMediaLibraryPermissionsAsync.mockResolvedValue({
-        granted: true,
-        canAskAgain: true,
-        expires: "never",
-        status: ImagePicker.PermissionStatus.GRANTED,
-      });
-
-      const launchImageLibraryAsync = jest.mocked(
-        ImagePicker.launchImageLibraryAsync,
+      launchImageLibraryAsync.mockResolvedValue(
+        imagePickerResult as ImagePickerResult,
       );
 
-      launchImageLibraryAsync.mockResolvedValue({
-        assets: [
-          {
-            assetId: null,
-            base64: null,
-            duration: null,
-            exif: null,
-            fileName: null,
-            fileSize: 885001,
-            height: 778,
-            mimeType: "image/jpeg",
-            pairedVideoAsset: null,
-            type: "image",
-            uri: "file://photo.jpg",
-            width: 1170,
-          },
-        ],
-        canceled: false,
+      render(withQueryClient(withNavigator(<AddDestination />)));
+      const searchInput = screen.getByPlaceholderText(
+        strings.addDestination.searchPlaceholder.destination,
+      );
+
+      await userEvent.type(searchInput, "Ravug");
+      fireEvent(searchInput, "onFocus");
+
+      await waitFor(() => {
+        expect(screen.getByText("Ravugodlu")).toBeOnTheScreen();
+        expect(screen.getByText("Karnataka, India")).toBeOnTheScreen();
       });
 
-      render(withQueryClient(<AddDestination />));
+      // Select the destination
+      const destinationItem = screen.getByText("Ravugodlu");
+      await userEvent.press(destinationItem);
+
+      // Verify the destination name is populated
+      expect(searchInput.props.value).toBe("Ravugodlu, Karnataka, India");
+      expect(screen.getByText("Location Details")).toBeOnTheScreen();
+
+      const {
+        nearestTownInput,
+        descriptionInput,
+        getThereInput,
+        bestTimeInput,
+      } = await getFormInputs();
+
+      await userEvent.type(nearestTownInput, "Test Town");
+
+      await userEvent.type(descriptionInput, "Test description");
+
+      await userEvent.type(getThereInput, "Test get there");
+
+      await userEvent.type(bestTimeInput, "Test best time");
+
+      const nextButton = screen.getByTestId("location-details-next-button");
+      await userEvent.press(nextButton);
+      expect(screen.getByText("Upload Photos")).toBeOnTheScreen();
+
+      const uploadArea = screen.getByText("Tap to upload");
+      expect(uploadArea).toBeOnTheScreen();
+      await userEvent.press(uploadArea);
+
+      const uploadedImages =
+        await screen.findAllByLabelText("Destination Image");
+      expect(uploadedImages[0]).toBeOnTheScreen();
+      expect(
+        screen.getAllByLabelText("Destination Image")[0].props.source,
+      ).toEqual({
+        uri: "file://photo.jpg",
+      });
+      await userEvent.press(screen.getByTestId("upload-photos-next-button"));
+      expect(await screen.findByText("Climbing Areas")).toBeOnTheScreen();
+    });
+
+    it("should be able to go back to the previous step and view the uploaded photos", async () => {
+      const { requestMediaLibraryPermissionsAsync, launchImageLibraryAsync } =
+        mediaLibraryMock();
+
+      requestMediaLibraryPermissionsAsync.mockResolvedValue(
+        medialLibraryPermissionResponse as MediaLibraryPermissionResponse,
+      );
+
+      launchImageLibraryAsync.mockResolvedValue(
+        imagePickerResult as ImagePickerResult,
+      );
+
+      render(withQueryClient(withNavigator(<AddDestination />)));
       const searchInput = screen.getByPlaceholderText(
         strings.addDestination.searchPlaceholder.destination,
       );
@@ -595,11 +692,23 @@ describe("AddDestination", () => {
         uri: "file://photo.jpg",
       });
       await userEvent.press(screen.getByTestId("upload-photos-next-button"));
+
       expect(await screen.findByText("Climbing Areas")).toBeOnTheScreen();
+      const prevButton = screen.getByTestId("climbingArea-prev-button");
+      await userEvent.press(prevButton);
+      expect(screen.getByText("Upload Photos")).toBeOnTheScreen();
+      const uploadedImages2 =
+        await screen.findAllByLabelText("Destination Image");
+      expect(uploadedImages2[0]).toBeOnTheScreen();
+      expect(
+        screen.getAllByLabelText("Destination Image")[0].props.source,
+      ).toEqual({
+        uri: "file://photo.jpg",
+      });
     });
 
     it("should display an error message, if the user attempts to proceed with out selecting atleast 1 image", async () => {
-      await render(withQueryClient(<AddDestination />));
+      await render(withQueryClient(withNavigator(<AddDestination />)));
       const searchInput = await screen.findByPlaceholderText(
         Strings.addDestination.searchPlaceholder.destination,
       );
@@ -620,24 +729,18 @@ describe("AddDestination", () => {
       expect(searchInput.props.value).toBe("Ravugodlu, Karnataka, India");
       expect(screen.getByText("Location Details")).toBeOnTheScreen();
 
-      const nearestTownInput = screen.getByPlaceholderText(
-        Strings.addDestination.locationForm.nearestTownPlaceholder,
-      );
+      const {
+        nearestTownInput,
+        descriptionInput,
+        getThereInput,
+        bestTimeInput,
+      } = await getFormInputs();
       await userEvent.type(nearestTownInput, "Test Town");
 
-      const descriptionInput = screen.getByPlaceholderText(
-        Strings.addDestination.locationForm.descriptionPlaceholder,
-      );
       await userEvent.type(descriptionInput, "Test description");
 
-      const getThereInput = screen.getByPlaceholderText(
-        Strings.addDestination.locationForm.getTherePlaceholder,
-      );
       await userEvent.type(getThereInput, "Test get there");
 
-      const bestTimeInput = screen.getByPlaceholderText(
-        Strings.addDestination.locationForm.bestTimePlaceholder,
-      );
       await userEvent.type(bestTimeInput, "Test best time");
 
       const nextButton = screen.getByTestId("location-details-next-button");
@@ -649,6 +752,263 @@ describe("AddDestination", () => {
       expect(
         screen.getByText("Please select at least one image"),
       ).toBeOnTheScreen();
+    });
+    it("should upload the photos to the database when the save button is pressed", async () => {
+      const uploadFn = getUploadFn();
+      mockSupabaseUpload(uploadFn);
+
+      const { requestMediaLibraryPermissionsAsync, launchImageLibraryAsync } =
+        mediaLibraryMock();
+
+      requestMediaLibraryPermissionsAsync.mockResolvedValue(
+        medialLibraryPermissionResponse as MediaLibraryPermissionResponse,
+      );
+
+      launchImageLibraryAsync.mockResolvedValue(
+        imagePickerResult as ImagePickerResult,
+      );
+
+      render(withQueryClient(withNavigator(<AddDestination />)));
+      const searchInput = screen.getByPlaceholderText(
+        strings.addDestination.searchPlaceholder.destination,
+      );
+
+      await userEvent.type(searchInput, "Ravug");
+      fireEvent(searchInput, "onFocus");
+
+      await waitFor(() => {
+        expect(screen.getByText("Ravugodlu")).toBeOnTheScreen();
+        expect(screen.getByText("Karnataka, India")).toBeOnTheScreen();
+      });
+
+      // Select the destination
+      const destinationItem = screen.getByText("Ravugodlu");
+      await userEvent.press(destinationItem);
+
+      // Verify the destination name is populated
+      expect(searchInput.props.value).toBe("Ravugodlu, Karnataka, India");
+      expect(screen.getByText("Location Details")).toBeOnTheScreen();
+
+      const {
+        nearestTownInput,
+        descriptionInput,
+        getThereInput,
+        bestTimeInput,
+      } = await getFormInputs();
+      await userEvent.type(nearestTownInput, "Test Town");
+
+      await userEvent.type(descriptionInput, "Test description");
+
+      await userEvent.type(getThereInput, "Test get there");
+
+      await userEvent.type(bestTimeInput, "Test best time");
+
+      const nextButton = screen.getByTestId("location-details-next-button");
+      await userEvent.press(nextButton);
+      expect(screen.getByText("Upload Photos")).toBeOnTheScreen();
+
+      const uploadArea = screen.getByText("Tap to upload");
+      expect(uploadArea).toBeOnTheScreen();
+      await userEvent.press(uploadArea);
+
+      const uploadedImages =
+        await screen.findAllByLabelText("Destination Image");
+      expect(uploadedImages[0]).toBeOnTheScreen();
+      expect(
+        screen.getAllByLabelText("Destination Image")[0].props.source,
+      ).toEqual({
+        uri: "file://photo.jpg",
+      });
+      await userEvent.press(screen.getByTestId("upload-photos-next-button"));
+      expect(await screen.findByText("Climbing Areas")).toBeOnTheScreen();
+      const saveButton = await screen.findByTestId("climbingArea-save-button");
+      await userEvent.press(saveButton);
+      await waitFor(() => {
+        expect(uploadFn).toHaveBeenCalled();
+      });
+    });
+    it("should display an error message with Retry option, if the image uploads fail", async () => {
+      const uploadFn = getUploadFn(true);
+      mockSupabaseUpload(uploadFn);
+
+      const { requestMediaLibraryPermissionsAsync, launchImageLibraryAsync } =
+        mediaLibraryMock();
+
+      requestMediaLibraryPermissionsAsync.mockResolvedValue(
+        medialLibraryPermissionResponse as MediaLibraryPermissionResponse,
+      );
+
+      launchImageLibraryAsync.mockResolvedValue(
+        imagePickerResult as ImagePickerResult,
+      );
+
+      render(withQueryClient(withNavigator(<AddDestination />)));
+      const searchInput = screen.getByPlaceholderText(
+        strings.addDestination.searchPlaceholder.destination,
+      );
+
+      await userEvent.type(searchInput, "Ravug");
+      fireEvent(searchInput, "onFocus");
+
+      await waitFor(() => {
+        expect(screen.getByText("Ravugodlu")).toBeOnTheScreen();
+        expect(screen.getByText("Karnataka, India")).toBeOnTheScreen();
+      });
+
+      // Select the destination
+      const destinationItem = screen.getByText("Ravugodlu");
+      await userEvent.press(destinationItem);
+
+      // Verify the destination name is populated
+      expect(searchInput.props.value).toBe("Ravugodlu, Karnataka, India");
+      expect(screen.getByText("Location Details")).toBeOnTheScreen();
+
+      const {
+        nearestTownInput,
+        descriptionInput,
+        getThereInput,
+        bestTimeInput,
+      } = await getFormInputs();
+      await userEvent.type(nearestTownInput, "Test Town");
+
+      await userEvent.type(descriptionInput, "Test description");
+
+      await userEvent.type(getThereInput, "Test get there");
+
+      await userEvent.type(bestTimeInput, "Test best time");
+
+      const nextButton = screen.getByTestId("location-details-next-button");
+      await userEvent.press(nextButton);
+      expect(screen.getByText("Upload Photos")).toBeOnTheScreen();
+
+      const uploadArea = screen.getByText("Tap to upload");
+      expect(uploadArea).toBeOnTheScreen();
+      await userEvent.press(uploadArea);
+
+      const uploadedImages =
+        await screen.findAllByLabelText("Destination Image");
+      expect(uploadedImages[0]).toBeOnTheScreen();
+      expect(
+        screen.getAllByLabelText("Destination Image")[0].props.source,
+      ).toEqual({
+        uri: "file://photo.jpg",
+      });
+      await userEvent.press(screen.getByTestId("upload-photos-next-button"));
+      expect(await screen.findByText("Climbing Areas")).toBeOnTheScreen();
+      const saveButton = await screen.findByTestId("climbingArea-save-button");
+      await userEvent.press(saveButton);
+      expect(uploadFn).toHaveBeenCalled();
+      expect(
+        await screen.findByText("StorageApiError: Upload failed"),
+      ).toBeOnTheScreen();
+    });
+    it("should save the destination in the database", async () => {
+      const uploadFn = getUploadFn();
+      mockSupabaseUpload(uploadFn);
+
+      const { requestMediaLibraryPermissionsAsync, launchImageLibraryAsync } =
+        mediaLibraryMock();
+
+      requestMediaLibraryPermissionsAsync.mockResolvedValue(
+        medialLibraryPermissionResponse as MediaLibraryPermissionResponse,
+      );
+
+      launchImageLibraryAsync.mockResolvedValue(
+        imagePickerResult as ImagePickerResult,
+      );
+
+      render(withQueryClient(withNavigator(<AddDestination />)));
+      const searchInput = screen.getByPlaceholderText(
+        strings.addDestination.searchPlaceholder.destination,
+      );
+
+      await userEvent.type(searchInput, "Ravug");
+      fireEvent(searchInput, "onFocus");
+
+      await waitFor(() => {
+        expect(screen.getByText("Ravugodlu")).toBeOnTheScreen();
+        expect(screen.getByText("Karnataka, India")).toBeOnTheScreen();
+      });
+
+      // Select the destination
+      const destinationItem = screen.getByText("Ravugodlu");
+      await userEvent.press(destinationItem);
+
+      // Verify the destination name is populated
+      expect(searchInput.props.value).toBe("Ravugodlu, Karnataka, India");
+      expect(screen.getByText("Location Details")).toBeOnTheScreen();
+
+      const {
+        nearestTownInput,
+        descriptionInput,
+        getThereInput,
+        bestTimeInput,
+      } = await getFormInputs();
+      await userEvent.type(nearestTownInput, "Test Town");
+
+      await userEvent.type(descriptionInput, "Test description");
+
+      await userEvent.type(getThereInput, "Test get there");
+
+      await userEvent.type(bestTimeInput, "Test best time");
+
+      const nextButton = screen.getByTestId("location-details-next-button");
+      await userEvent.press(nextButton);
+      expect(screen.getByText("Upload Photos")).toBeOnTheScreen();
+
+      const uploadArea = screen.getByText("Tap to upload");
+      expect(uploadArea).toBeOnTheScreen();
+      await userEvent.press(uploadArea);
+
+      const uploadedImages =
+        await screen.findAllByLabelText("Destination Image");
+      expect(uploadedImages[0]).toBeOnTheScreen();
+      expect(
+        screen.getAllByLabelText("Destination Image")[0].props.source,
+      ).toEqual({
+        uri: "file://photo.jpg",
+      });
+      await userEvent.press(screen.getByTestId("upload-photos-next-button"));
+      expect(await screen.findByText("Climbing Areas")).toBeOnTheScreen();
+      const button = screen.getByText(addDestination.climbingAreas.buttonText);
+      await userEvent.press(button);
+      const areaNameInput = await screen.findByPlaceholderText(
+        addDestination.climbingAreas.areaNamePlaceholder,
+      );
+      const areaDescInput = await screen.findByPlaceholderText(
+        addDestination.climbingAreas.areaDescriptionPlaceholder,
+      );
+      await userEvent.type(areaNameInput, "Blue Water Area");
+      await userEvent.type(
+        areaDescInput,
+        "A beautiful bouldering area next to a lagoon",
+      );
+      const map = screen.getByTestId("destination-map");
+      fireEvent(map, "press", {
+        nativeEvent: {
+          coordinate: {
+            latitude: 12.73536,
+            longitude: 77.5026,
+          },
+        },
+      });
+
+      const saveBtn = await screen.findByTestId("save-area-button");
+      await userEvent.press(saveBtn);
+
+      expect(screen.getAllByText("Blue Water Area")).toHaveLength(2);
+      expect(screen.getByText("12.73536, 77.5026")).toBeOnTheScreen();
+      const saveButton = await screen.findByTestId("climbingArea-save-button");
+      await userEvent.press(saveButton);
+      await waitFor(() => {
+        expect(uploadFn).toHaveBeenCalled();
+        expect(mockNavigate).toHaveBeenCalledWith("Destinations", {
+          screen: "DestinationDetails",
+          params: {
+            destinationId: 5,
+          },
+        });
+      });
     });
   });
   describe("Coordinates mode", () => {
@@ -662,7 +1022,7 @@ describe("AddDestination", () => {
       jest.useRealTimers();
     });
     it("should display the Search box in coordinates mode, when the Coordinates radio button is clicked", async () => {
-      await render(withQueryClient(<AddDestination />));
+      await render(withQueryClient(withNavigator(<AddDestination />)));
       const coordinatesRadio = await screen.findByText("Coordinates");
       expect(coordinatesRadio).toBeOnTheScreen();
       await userEvent.press(coordinatesRadio);
@@ -672,7 +1032,7 @@ describe("AddDestination", () => {
       expect(searchInput).toBeOnTheScreen();
     });
     it("showld allow the user to search for coordinates in coordinates mode", async () => {
-      await render(withQueryClient(<AddDestination />));
+      await render(withQueryClient(withNavigator(<AddDestination />)));
       const coordinatesRadio = screen.getByText("Coordinates");
       expect(coordinatesRadio).toBeOnTheScreen();
       await userEvent.press(coordinatesRadio);
@@ -685,7 +1045,7 @@ describe("AddDestination", () => {
     });
 
     it("should not allow the user to search if the query does not match the coordinates format", async () => {
-      await render(withQueryClient(<AddDestination />));
+      await render(withQueryClient(withNavigator(<AddDestination />)));
       const coordinatesRadio = screen.getByText("Coordinates");
       expect(coordinatesRadio).toBeOnTheScreen();
       await userEvent.press(coordinatesRadio);
@@ -695,12 +1055,12 @@ describe("AddDestination", () => {
       expect(searchInput).toBeOnTheScreen();
       await userEvent.type(searchInput, "Railay Beach");
       expect(
-        await screen.findByText(strings.errors.validationMsg),
+        await screen.findByText(strings.errors.latLongInvalidMsg),
       ).toBeOnTheScreen();
     });
 
     it("should clear the validation error when the user enters valid coordinates", async () => {
-      await render(withQueryClient(<AddDestination />));
+      await render(withQueryClient(withNavigator(<AddDestination />)));
       const coordinatesRadio = screen.getByText("Coordinates");
       expect(coordinatesRadio).toBeOnTheScreen();
       await userEvent.press(coordinatesRadio);
@@ -710,18 +1070,18 @@ describe("AddDestination", () => {
       expect(searchInput).toBeOnTheScreen();
       await userEvent.type(searchInput, "Railay Beach");
       expect(
-        await screen.findByText(strings.errors.validationMsg),
+        await screen.findByText(strings.errors.latLongInvalidMsg),
       ).toBeOnTheScreen();
       await userEvent.clear(searchInput);
       await userEvent.type(searchInput, "126.34,567.78");
       await waitFor(() =>
         expect(
-          screen.queryByText(strings.errors.validationMsg),
+          screen.queryByText(strings.errors.latLongInvalidMsg),
         ).not.toBeOnTheScreen(),
       );
     });
     it("should show an error when the coordinates are not found", async () => {
-      await render(withQueryClient(<AddDestination />));
+      await render(withQueryClient(withNavigator(<AddDestination />)));
       const coordinatesRadio = screen.getByText("Coordinates");
       await userEvent.press(coordinatesRadio);
       const searchInput = await screen.findByPlaceholderText(
@@ -729,12 +1089,11 @@ describe("AddDestination", () => {
       );
       expect(searchInput).toBeOnTheScreen();
       await userEvent.type(searchInput, "123,456");
-      await waitFor(() => {
-        expect(screen.getByTestId("alert-circle-icon")).toBeOnTheScreen();
-      });
+
+      expect(await screen.findByTestId("alert-circle-icon")).toBeOnTheScreen();
     });
     it("should display a success icon and a stepper when the user enters accurate coordinates", async () => {
-      await render(withQueryClient(<AddDestination />));
+      await render(withQueryClient(withNavigator(<AddDestination />)));
       const coordinatesRadio = screen.getByText("Coordinates");
       await userEvent.press(coordinatesRadio);
 
@@ -753,7 +1112,7 @@ describe("AddDestination", () => {
     });
 
     it("should not show the stepper when the coordinates are not found", async () => {
-      await render(withQueryClient(<AddDestination />));
+      await render(withQueryClient(withNavigator(<AddDestination />)));
       const coordinatesRadio = screen.getByText("Coordinates");
       await userEvent.press(coordinatesRadio);
       const searchInput = await screen.findByPlaceholderText(
@@ -767,7 +1126,7 @@ describe("AddDestination", () => {
     });
 
     it("should not display a stepper when the user enters invalid coordinates", async () => {
-      await render(withQueryClient(<AddDestination />));
+      await render(withQueryClient(withNavigator(<AddDestination />)));
       const coordinatesRadio = screen.getByText("Coordinates");
       await userEvent.press(coordinatesRadio);
 
@@ -789,7 +1148,7 @@ describe("AddDestination", () => {
     });
 
     it("should display the Destination name and the Location Details form when the user enters accurate coordinates", async () => {
-      await render(withQueryClient(<AddDestination />));
+      await render(withQueryClient(withNavigator(<AddDestination />)));
       const coordinatesRadio = screen.getByText("Coordinates");
       await userEvent.press(coordinatesRadio);
 
@@ -812,7 +1171,7 @@ describe("AddDestination", () => {
     });
 
     it("should be able to enter location details and proceed to the next step", async () => {
-      await render(withQueryClient(<AddDestination />));
+      await render(withQueryClient(withNavigator(<AddDestination />)));
       const coordinatesRadio = screen.getByText("Coordinates");
       await userEvent.press(coordinatesRadio);
 
@@ -861,7 +1220,7 @@ describe("AddDestination", () => {
     it("should receive a warning message when trying to navigate away without saving", async () => {
       const alertSpy = jest.spyOn(Alert, "alert");
 
-      await render(withQueryClient(<AddDestination />));
+      await render(withQueryClient(withNavigator(<AddDestination />)));
       const coordinatesRadio = screen.getByText("Coordinates");
       await userEvent.press(coordinatesRadio);
 
@@ -894,7 +1253,7 @@ describe("AddDestination", () => {
         .spyOn(utils, "confirmUndo")
         .mockImplementation(() => Promise.resolve(true));
 
-      await render(withQueryClient(<AddDestination />));
+      await render(withQueryClient(withNavigator(<AddDestination />)));
       const coordinatesRadio = screen.getByText("Coordinates");
       await userEvent.press(coordinatesRadio);
 
@@ -948,7 +1307,7 @@ describe("AddDestination", () => {
     });
 
     it("should display a message if the selected destination already exists", async () => {
-      await render(withQueryClient(<AddDestination />));
+      await render(withQueryClient(withNavigator(<AddDestination />)));
       const coordinatesRadio = screen.getByText("Coordinates");
       await userEvent.press(coordinatesRadio);
 
@@ -959,11 +1318,9 @@ describe("AddDestination", () => {
       await userEvent.type(searchInput, "15.3333,  76.4167");
       fireEvent(searchInput, "onFocus");
 
-      await waitFor(() => {
-        expect(
-          screen.getByText("Destination already exists"),
-        ).toBeOnTheScreen();
-      });
+      expect(
+        await screen.findByText('Destination "Hampi" already exists'),
+      ).toBeOnTheScreen();
     });
   });
 });
