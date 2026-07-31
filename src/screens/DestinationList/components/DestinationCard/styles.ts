@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import { typography, colors } from "@/src/theme";
+import globalStyles from "@/src/theme/globalStyles";
 
 const styles = StyleSheet.create({
   title: {
@@ -7,24 +8,8 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
     color: colors.primary1,
   },
-  imageContainer: {
-    shadowColor: "#000000",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 4,
-    borderRadius: 8,
-    marginBottom: 8,
-  },
-  image: {
-    width: "100%",
-    aspectRatio: 16 / 12,
-    height: "auto",
-    borderRadius: 8,
-  },
+  imageContainer: globalStyles.imageContainer,
+  image: globalStyles.image,
   description: {
     ...typography.bodyText,
   },

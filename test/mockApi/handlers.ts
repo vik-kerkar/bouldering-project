@@ -96,7 +96,11 @@ export const handlers = [
   }),
   rest.get(destinationApiUrl!, (req, res, ctx) => {
     const url = new URL(req.url);
-    const placeId = url.searchParams.get("placeId");
+    const orFilter = url.searchParams.get("or");
+    const placeIdFromOrFilter = orFilter?.match(/placeId\.eq\.([^,)]+)/)?.[1];
+    const placeId =
+      url.searchParams.get("placeId") ||
+      (placeIdFromOrFilter ? `eq.${placeIdFromOrFilter}` : null);
     const select = url.searchParams.get("select");
     const id = url.searchParams.get("id");
 
@@ -136,8 +140,15 @@ export const handlers = [
           name: "Ravugodlu",
           url: "https://example.com/ravugodlu.jpg",
           description: "A beautiful climbing destination",
-          imageUrls: ["https://example.com/ravugodlu.jpg"],
+          lat: 12.73221,
+          long: 77.49886,
+          imageUrls: [
+            "https://example.com/ravugodlu.jpg",
+            "https://example.com/ravugodlu2.jpg",
+            "https://example.com/ravugodlu3.jpg",
+          ],
           defaultImgUrlIndex: 0,
+          country: "India",
         }),
       );
     }
@@ -151,8 +162,13 @@ export const handlers = [
             name: "Ravugodlu",
             url: "https://example.com/ravugodlu.jpg",
             description: "A beautiful climbing destination",
-            imageUrls: ["https://example.com/ravugodlu.jpg"],
+            imageUrls: [
+              "https://example.com/ravugodlu.jpg",
+              "https://example.com/ravugodlu2.jpg",
+              "https://example.com/ravugodlu3.jpg",
+            ],
             defaultImgUrlIndex: 0,
+            country: "India",
           },
         ]),
       );
@@ -183,6 +199,38 @@ export const handlers = [
         miscInfo: "winter",
       }),
     );
+  }),
+  rest.get(climbingAreaApiUrl!, (req, res, ctx) => {
+    const url = new URL(req.url);
+    const destinationId = url.searchParams.get("destinationId");
+
+    if (destinationId === "eq.1") {
+      return res(
+        ctx.status(200),
+        ctx.json([
+          {
+            id: 12,
+            created_at: "2026-07-14T14:51:33.319184+00:00",
+            areaName: "Pinkathon",
+            areaDescription: "Pinkathon climbing area",
+            latitude: 12.7375,
+            longitude: 77.5038,
+            destinationId: 1,
+          },
+          {
+            id: 13,
+            created_at: "2026-07-14T14:51:33.319184+00:00",
+            areaName: "Red Sea area",
+            areaDescription: "Red Sea climbing area",
+            latitude: 12.7367,
+            longitude: 77.5031,
+            destinationId: 1,
+          },
+        ]),
+      );
+    }
+
+    return res(ctx.status(200), ctx.json([]));
   }),
   rest.post(climbingAreaApiUrl, (req, res, ctx) => {
     return res(

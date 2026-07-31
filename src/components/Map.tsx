@@ -13,13 +13,14 @@ interface MapProps {
   longitude: number;
   destinationName: string;
   children?: React.ReactNode;
-  onPress: (event: MapPressEvent) => void;
+  onPress?: (event: MapPressEvent) => void;
+  zoomLevel?: number;
 }
 const styles = StyleSheet.create({
   container: {
     borderRadius: 10,
     width: "100%",
-    height: 300,
+    height: 270,
   },
   markerContainer: {
     alignItems: "center",
@@ -30,7 +31,24 @@ const styles = StyleSheet.create({
 });
 
 const Map = (props: MapProps) => {
-  const { latitude, longitude, destinationName, onPress, testID } = props;
+  const {
+    latitude,
+    longitude,
+    destinationName,
+    onPress,
+    testID,
+    zoomLevel = -1,
+  } = props;
+
+  const DEFAULT_DELTA = 0.005;
+  const ZOOM_STEP = 0.001;
+  const MIN_DELTA = 0.0005;
+
+  const delta = Math.max(
+    DEFAULT_DELTA - (zoomLevel + 1) * ZOOM_STEP,
+    MIN_DELTA,
+  );
+
   return (
     <MapView
       testID={testID}
@@ -41,8 +59,8 @@ const Map = (props: MapProps) => {
       initialRegion={{
         latitude: latitude,
         longitude: longitude,
-        latitudeDelta: 0.005,
-        longitudeDelta: 0.005,
+        latitudeDelta: delta,
+        longitudeDelta: delta,
       }}
     >
       <Marker

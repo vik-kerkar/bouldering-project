@@ -13,6 +13,8 @@ import {
   IconButton,
   ImageButton,
   Snackbar,
+  AreaMarker,
+  ClimbingArea,
 } from "@/src/components";
 
 import { useSaveDestination } from "../../api/useSaveDestination";
@@ -30,8 +32,6 @@ import { validateCoordinates } from "../../module";
 
 import { RootTabParamList } from "@/app/types";
 import { Coordinate, ClimbingArea as IClimbingArea } from "../../types";
-
-import ClimbingArea from "./ClimbingArea";
 
 type NavigationProp = BottomTabNavigationProp<
   RootTabParamList,
@@ -228,21 +228,7 @@ const ClimbingAreas = () => {
   );
 
   const renderSavedAreaMarkers = () =>
-    climbingAreas?.map((area, index) => (
-      <Marker
-        key={index}
-        testID="area-marker"
-        coordinate={{
-          latitude: area.latitude,
-          longitude: area.longitude,
-        }}
-      >
-        <View style={{ alignItems: "center" }}>
-          <View style={styles.areaMarker} />
-          <Text style={styles.marker}>{area.areaName}</Text>
-        </View>
-      </Marker>
-    ));
+    climbingAreas?.map((area, index) => <AreaMarker key={index} area={area} />);
   return (
     <ScrollView>
       <Text style={styles.title}>{addDestination.climbingAreas.title}</Text>

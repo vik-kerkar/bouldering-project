@@ -5,20 +5,18 @@ import {
   ParamListBase,
 } from "@react-navigation/native";
 
-import { IDestination } from "../src/screens/DestinationList/types";
-
 export type RootTabParamList = {
   Destinations: NavigatorScreenParams<DestinationsStackParamList>;
   "Add Destination": undefined;
 };
 
 export interface AppState {
-  destinations?: IDestination[];
+  destinations?: Destination[];
 }
 
 export interface AppAction {
   type: "SET_DESTINATIONS";
-  payload: IDestination[];
+  payload: Destination[];
 }
 
 export type DestinationsStackParamList = {
@@ -33,3 +31,28 @@ export type Navigation = {
 };
 
 export type TabPressEvent = EventArg<"tabPress", true>;
+
+export interface Place {
+  id: number;
+  name: string;
+  state: string;
+  country: string;
+  lat: number;
+  long: number;
+  county: string;
+  district: string;
+}
+
+export interface DestinationLocation {
+  placeId: string;
+  nearestTownCity: string;
+  description: string;
+  gettingThere: string;
+  miscInfo?: string;
+}
+
+export interface Destination extends Place, DestinationLocation {
+  description: string;
+  imageUrls: string[];
+  defaultImgUrlIndex: number;
+}

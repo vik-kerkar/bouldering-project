@@ -1,12 +1,5 @@
-export interface IDestination {
-  id: number;
-  name: string;
-  description: string;
-  country: string;
-  imageUrls: string[];
-  defaultImgUrlIndex: number;
-}
+import { Destination } from "@/app/types";
 
 export interface IDestinationList {
-  destinations: IDestination[];
+  destinations: Destination[];
 }

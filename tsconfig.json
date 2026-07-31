@@ -4,7 +4,8 @@
     "strict": true,
     "paths": {
       "@/*": ["./*"]
-    }
+    },
+    "types": ["jest", "@testing-library/jest-native"]
   },
   "include": [
     "**/*.ts",
@@ -15,6 +16,5 @@
     "metro.config.js",
     "test/jest.setup.ts"
   ],
-  "exclude": ["node_modules", "node_modules/**/*"],
-  "types": ["jest", "@testing-library/jest-native"]
+  "exclude": ["node_modules", "node_modules/**/*"]
 }

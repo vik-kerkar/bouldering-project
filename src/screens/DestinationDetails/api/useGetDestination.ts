@@ -3,7 +3,7 @@ import supabase from "@/app/supabase";
 
 export const useGetDestination = (destinationId: number) => {
   return useQuery({
-    queryKey: ["destinationDetails"],
+    queryKey: ["destinationDetails" + destinationId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("Destination")

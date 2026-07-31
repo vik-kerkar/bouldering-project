@@ -12,6 +12,12 @@ const DestinationListWithStack = withStackNavigator([
 ]);
 
 describe("DestinationList", () => {
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+  afterAll(() => {
+    jest.useRealTimers();
+  });
   it("should render", () => {
     render(withQueryClient(<DestinationListWithStack />));
     expect(screen.getByText("Climbing Destinations")).toBeTruthy();
@@ -19,7 +25,7 @@ describe("DestinationList", () => {
 
   it("should display a list of climbing destinations", async () => {
     render(withQueryClient(<DestinationListWithStack />));
-    expect(await screen.findByText("Ravugodlu")).toBeTruthy();
+    expect(await screen.findByText("Ravugodlu,India")).toBeOnTheScreen();
   });
 
   it("should display the destination details when a destination image is clicked", async () => {
@@ -33,6 +39,6 @@ describe("DestinationList", () => {
 
     expect(await screen.findByText("Info")).toBeOnTheScreen();
     expect(await screen.findByText("Photos")).toBeOnTheScreen();
-    expect(await screen.findByText("Climbing Areas")).toBeOnTheScreen();
+    expect(await screen.findByText("Areas")).toBeOnTheScreen();
   });
 });

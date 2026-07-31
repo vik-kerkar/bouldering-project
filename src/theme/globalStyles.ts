@@ -1,5 +1,7 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
 import { typography, colors } from ".";
+
+const screenWidth = Dimensions.get("window").width;
 
 const globalStyles = StyleSheet.create({
   heading1: {
@@ -7,23 +9,24 @@ const globalStyles = StyleSheet.create({
     color: colors.primary1,
     marginVertical: 12,
   },
-});
-
-export const appStyles = StyleSheet.create({
-  icon: {
-    fontSize: 24,
+  image: {
+    aspectRatio: 13 / 8,
+    width: "100%",
+    height: "auto",
+    borderRadius: 8,
   },
-  tabContainer: {
-    backgroundColor: colors.background,
-    flex: 1,
-    paddingHorizontal: 30,
-    alignItems: "stretch",
-    paddingTop: 30,
-  },
-  stackContainer: {
-    backgroundColor: colors.background,
-    flex: 1,
-    alignItems: "stretch",
+  imageContainer: {
+    position: "relative",
+    width: screenWidth - 60,
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: -2,
+      height: 3,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    borderRadius: 8,
+    marginBottom: 8,
   },
 });
 

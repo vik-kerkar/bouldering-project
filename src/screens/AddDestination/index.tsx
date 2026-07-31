@@ -39,9 +39,11 @@ const AddDestination = () => {
 
   const resetState = useAddDestinationStore((state) => state.reset);
 
-  const { data: destinationExists } = useCheckDestinationExists(
-    selectedPlace?.id || "",
-  );
+  const { data: destinationExists } = useCheckDestinationExists({
+    placeId: selectedPlace?.id || "",
+    lat: selectedPlace?.lat as number,
+    long: selectedPlace?.long as number,
+  });
 
   const [step, setStep] = useState(1);
 

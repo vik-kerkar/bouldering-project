@@ -12,9 +12,6 @@ const styles = StyleSheet.create({
     marginBlockEnd: 24,
     alignSelf: "center",
   },
-  marker: {
-    ...typography.markerText,
-  },
   newAreaMarker: {
     backgroundColor: "#F4BC43",
     width: 23,
@@ -24,16 +21,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderStyle: "solid",
     borderColor: "#eb6315",
-  },
-  areaMarker: {
-    backgroundColor: "#2D7E33",
-    width: 23,
-    height: 23,
-    opacity: 0.8,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderStyle: "solid",
-    borderColor: "#043001",
   },
   buttonContainer: {
     marginBlockStart: 20,

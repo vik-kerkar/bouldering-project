@@ -40,6 +40,16 @@
   "destinationList": {
     "headline": "Climbing Destinations"
   },
+  "destinationDetails": {
+    "info": {
+      "gpsCoordinates": "GPS Coordinates",
+      "nearestTownCity": "Nearest town / city",
+      "aboutThePlace": "About the place",
+      "howToGetThere": "How to get there",
+      "bestTimeToClimb": "Best time to climb"
+    },
+    "areas": "Climbing Areas"
+  },
   "errors": {
     "latLongInvalidMsg": "Invalid coordinates format",
     "latLongOutOfRange": "Area must be within 100km from destination",

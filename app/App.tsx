@@ -10,7 +10,7 @@ import DestinationDetails from "@/src/screens/DestinationDetails";
 
 import { useAddDestinationStore } from "@/src/screens/AddDestination/state";
 
-import { appStyles } from "@/src/theme/globalStyles";
+import styles from "./styles";
 
 import { confirmUndo } from "@/src/utils";
 
@@ -58,7 +58,7 @@ export default function App() {
       <MyTabs.Navigator
         initialRouteName="Destinations"
         screenLayout={({ children }) => (
-          <View style={appStyles.tabContainer}>{children}</View>
+          <View style={styles.tabContainer}>{children}</View>
         )}
         screenOptions={{
           tabBarStyle: {
@@ -72,7 +72,7 @@ export default function App() {
           name="Destinations"
           options={{
             headerShown: false,
-            tabBarIcon: () => <Text style={appStyles.icon}>🧗‍♀️</Text>,
+            tabBarIcon: () => <Text style={styles.icon}>🧗‍♀️</Text>,
             tabBarButtonTestID: "destinations-tab",
             popToTopOnBlur: true,
             tabBarActiveBackgroundColor: colors.activeTabBackground,
@@ -82,7 +82,7 @@ export default function App() {
             <Stack.Navigator
               screenOptions={{ headerShown: false }}
               screenLayout={({ children }) => (
-                <View style={appStyles.stackContainer}>{children}</View>
+                <View style={styles.stackContainer}>{children}</View>
               )}
             >
               <Stack.Screen
@@ -100,7 +100,7 @@ export default function App() {
           name="Add Destination"
           options={{
             headerShown: false,
-            tabBarIcon: () => <Text style={appStyles.icon}>⛰️</Text>,
+            tabBarIcon: () => <Text style={styles.icon}>⛰️</Text>,
             tabBarButtonTestID: "add-destination-tab",
             tabBarActiveBackgroundColor: colors.activeTabBackground,
           }}

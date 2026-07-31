@@ -1,13 +1,4 @@
-export interface Place {
-  id: string;
-  name: string;
-  state: string;
-  country: string;
-  lat: number;
-  long: number;
-  county: string;
-  district: string;
-}
+import { Place, DestinationLocation } from "@/app/types";
 
 export interface Feature {
   properties: {
@@ -28,15 +19,7 @@ export enum SearchMode {
   Coordinates = "Coordinates",
 }
 
-export interface LocationData extends Omit<Place, "id"> {
-  placeId: string;
-  nearestTownCity: string;
-  description: string;
-  gettingThere: string;
-  miscInfo?: string;
-}
-
-export interface NewDestination extends LocationData {
+export interface NewDestination extends DestinationLocation, Omit<Place, "id"> {
   url?: string;
   defaultImgUrlIndex?: number;
   imageUrls?: string[];
