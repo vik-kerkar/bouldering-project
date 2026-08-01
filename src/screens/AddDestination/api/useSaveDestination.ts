@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { File } from "expo-file-system";
 import { decode } from "base64-arraybuffer";
 
@@ -97,6 +97,7 @@ type SaveDestinationParams = {
 };
 
 export const useSaveDestination = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
       images,
@@ -125,6 +126,9 @@ export const useSaveDestination = () => {
         }));
         await saveClimbingAreas(climbingAreasPayload || []);
       }
+
+      // Invalidate the destinations query to refresh the list
+      queryClient.invalidateQueries({ queryKey: ["destinations"] });
 
       return savedDestination;
     },

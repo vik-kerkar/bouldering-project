@@ -4,7 +4,6 @@ import { StatusBar } from "expo-status-bar";
 import { Text, View } from "react-native";
 
 import DestinationList from "../src/screens/DestinationList";
-import { colors } from "@/src/theme";
 import AddDestination from "@/src/screens/AddDestination";
 import DestinationDetails from "@/src/screens/DestinationDetails";
 
@@ -52,6 +51,18 @@ export default function App() {
     },
   });
 
+  const TabBarIcon = ({
+    focused,
+    children,
+  }: {
+    focused: boolean;
+    children: React.ReactNode;
+  }) => (
+    <View style={[styles.iconContainer, focused && styles.activeIconContainer]}>
+      {children}
+    </View>
+  );
+
   return (
     <>
       <StatusBar style="dark" />
@@ -61,10 +72,7 @@ export default function App() {
           <View style={styles.tabContainer}>{children}</View>
         )}
         screenOptions={{
-          tabBarStyle: {
-            backgroundColor: colors.primary4,
-            paddingVertical: 10,
-          },
+          tabBarStyle: styles.tabBar,
         }}
         screenListeners={handleTabEvents}
       >
@@ -72,10 +80,14 @@ export default function App() {
           name="Destinations"
           options={{
             headerShown: false,
-            tabBarIcon: () => <Text style={styles.icon}>🧗‍♀️</Text>,
+            tabBarLabelStyle: styles.tabBarLabel,
+            tabBarIcon: ({ focused }) => (
+              <TabBarIcon focused={focused}>
+                <Text style={styles.icon}> 🧗‍♀️</Text>
+              </TabBarIcon>
+            ),
             tabBarButtonTestID: "destinations-tab",
             popToTopOnBlur: true,
-            tabBarActiveBackgroundColor: colors.activeTabBackground,
           }}
         >
           {() => (
@@ -100,9 +112,13 @@ export default function App() {
           name="Add Destination"
           options={{
             headerShown: false,
-            tabBarIcon: () => <Text style={styles.icon}>⛰️</Text>,
+            tabBarLabelStyle: styles.tabBarLabel,
+            tabBarIcon: ({ focused }) => (
+              <TabBarIcon focused={focused}>
+                <Text style={styles.icon}>⛰️</Text>
+              </TabBarIcon>
+            ),
             tabBarButtonTestID: "add-destination-tab",
-            tabBarActiveBackgroundColor: colors.activeTabBackground,
           }}
         >
           {() => <AddDestination />}

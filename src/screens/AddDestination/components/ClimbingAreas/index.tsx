@@ -238,6 +238,7 @@ const ClimbingAreas = () => {
         destinationName={newDestination?.name as string}
         onPress={handleMapSelection}
         testID="destination-map"
+        zoomLevel={-7}
       >
         {newArea && renderNewAreaMarker(newArea)}
         {renderSavedAreaMarkers()}
