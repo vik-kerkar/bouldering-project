@@ -14,6 +14,7 @@ import {
   ImageButton,
   Snackbar,
   AreaMarker,
+  AreaMarker,
   ClimbingArea,
 } from "@/src/components";
 

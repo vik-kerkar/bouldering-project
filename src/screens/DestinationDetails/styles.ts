@@ -20,6 +20,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingVertical: 16,
     justifyContent: "flex-start",
+    borderRadius: 8,
   },
   tabItem: {
     flex: 1,

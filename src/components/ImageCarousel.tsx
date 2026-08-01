@@ -93,18 +93,20 @@ const ImageCarousel = ({ images }: Props) => {
           );
         }}
       />
-      <View style={styles.dotContainer}>
-        {images.map((_, index) => (
-          <Pressable key={index} onPress={() => handleDotPress(index)}>
-            <View
-              key={index}
-              accessible
-              accessibilityLabel="carousel-dot"
-              style={[styles.dot, currentSlide === index && styles.activeDot]}
-            />
-          </Pressable>
-        ))}
-      </View>
+      {images.length > 1 && (
+        <View style={styles.dotContainer}>
+          {images.map((_, index) => (
+            <Pressable key={index} onPress={() => handleDotPress(index)}>
+              <View
+                key={index}
+                accessible
+                accessibilityLabel="carousel-dot"
+                style={[styles.dot, currentSlide === index && styles.activeDot]}
+              />
+            </Pressable>
+          ))}
+        </View>
+      )}
     </View>
   );
 };
