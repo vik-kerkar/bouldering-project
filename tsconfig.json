@@ -3,16 +3,18 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "@/*": [
-        "./*"
-      ]
-    }
+      "@/*": ["./*"]
+    },
+    "types": ["jest", "@testing-library/jest-native"]
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
+    "expo-env.d.ts",
+    "src/screens/DestinationList/DestinationList.test.tsx",
+    "metro.config.js",
+    "test/jest.setup.ts"
   ],
-  "types": ["jest", "@testing-library/jest-native"]
+  "exclude": ["node_modules", "node_modules/**/*"]
 }

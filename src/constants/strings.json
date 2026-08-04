@@ -1,0 +1,62 @@
+{
+  "addDestination": {
+    "headline": "Add a Destination",
+    "options": {
+      "destinations": "Destinations",
+      "coordinates": "Coordinates"
+    },
+    "searchPlaceholder": {
+      "destination": "Search destination name",
+      "coordinates": "Search coordinates"
+    },
+    "locationDetails": {
+      "title": "Location Details"
+    },
+    "destinationExists": "Destination \"{{name}}\" already exists",
+    "locationForm": {
+      "nearestTown": "Nearest Town/City",
+      "nearestTownPlaceholder": "Enter the nearest town or city",
+      "describeLocation": "Describe the location",
+      "descriptionPlaceholder": "Write a brief summary including rock type, topography, climbing style and more",
+      "howToGetThere": "How to get there?",
+      "getTherePlaceholder": "Write directions or key landmarks",
+      "bestTimeToClimb": "Best time to climb",
+      "bestTimePlaceholder": "Mention seasonal variations, weather considerations, and access restrictions",
+      "destinationName": "Destination Name",
+      "destinationNamePlaceholder": "Enter the destination name"
+    },
+    "uploadPhotos": {
+      "title": "Upload Photos",
+      "validationError": "Please select at least one image"
+    },
+    "climbingAreas": {
+      "title": "Climbing Areas",
+      "buttonText": "Add Climbing Area",
+      "areaNamePlaceholder": "Enter the area name",
+      "latLongPlaceholder": "Select or enter Lat and Long",
+      "areaDescriptionPlaceholder": "Describe the climbing area"
+    }
+  },
+  "destinationList": {
+    "headline": "Climbing Destinations"
+  },
+  "destinationDetails": {
+    "info": {
+      "gpsCoordinates": "GPS Coordinates",
+      "nearestTownCity": "Nearest town / city",
+      "aboutThePlace": "About the place",
+      "howToGetThere": "How to get there",
+      "bestTimeToClimb": "Best time to climb"
+    },
+    "areas": "Climbing Areas"
+  },
+  "errors": {
+    "latLongInvalidMsg": "Invalid coordinates format",
+    "latLongOutOfRange": "Area must be within 100km from destination",
+    "requiredMsg": "This field is required",
+    "storageApi": {
+      "name": "StorageApiError",
+      "message": "Upload failed"
+    }
+  }
+}
