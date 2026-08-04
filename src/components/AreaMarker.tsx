@@ -28,19 +28,21 @@ const styles = StyleSheet.create({
   },
 });
 
-const AreaMarker = ({ area, testID = "area-marker" }: AreaMarkerProps) => (
-  <Marker
-    testID={testID}
-    coordinate={{
-      latitude: area.latitude,
-      longitude: area.longitude,
-    }}
-  >
-    <View style={styles.markerContainer}>
-      <View style={styles.areaMarker} />
-      <Text style={styles.marker}>{area.areaName}</Text>
-    </View>
-  </Marker>
-);
+const AreaMarker = ({ area, testID = "area-marker" }: AreaMarkerProps) => {
+  return (
+    <Marker
+      testID={testID}
+      coordinate={{
+        latitude: area.latitude,
+        longitude: area.longitude,
+      }}
+    >
+      <View style={styles.markerContainer}>
+        <View style={styles.areaMarker} />
+        <Text style={styles.marker}>{area.areaName}</Text>
+      </View>
+    </Marker>
+  );
+};
 
 export default AreaMarker;

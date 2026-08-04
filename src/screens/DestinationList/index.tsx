@@ -1,7 +1,6 @@
 import React from "react";
 
 import { Text, FlatList } from "react-native";
-//import { IDestinationList } from "./types";
 
 import DestinationCard from "./components/DestinationCard";
 import styles from "./styles";

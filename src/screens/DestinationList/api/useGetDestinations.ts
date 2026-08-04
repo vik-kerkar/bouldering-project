@@ -5,7 +5,10 @@ export const useGetDestinations = () => {
   return useQuery({
     queryKey: ["destinations"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("Destination").select("*");
+      const { data, error } = await supabase
+        .from("Destination")
+        .select("*")
+        .order("id");
       if (error) {
         throw error;
       }

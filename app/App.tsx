@@ -3,6 +3,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import { Text, View } from "react-native";
 
+import * as Device from "expo-device";
+
 import DestinationList from "../src/screens/DestinationList";
 import AddDestination from "@/src/screens/AddDestination";
 import DestinationDetails from "@/src/screens/DestinationDetails";
@@ -51,6 +53,8 @@ export default function App() {
     },
   });
 
+  const isTablet = Device.deviceType === Device.DeviceType.TABLET;
+
   const TabBarIcon = ({
     focused,
     children,
@@ -58,7 +62,12 @@ export default function App() {
     focused: boolean;
     children: React.ReactNode;
   }) => (
-    <View style={[styles.iconContainer, focused && styles.activeIconContainer]}>
+    <View
+      style={[
+        styles.iconContainer,
+        focused && !isTablet && styles.activeIconContainer,
+      ]}
+    >
       {children}
     </View>
   );

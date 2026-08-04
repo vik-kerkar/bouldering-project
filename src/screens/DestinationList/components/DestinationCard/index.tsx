@@ -1,17 +1,16 @@
 import React from "react";
 import { Text, View, Image, Pressable } from "react-native";
-import { IDestination } from "../../types";
 import styles from "./styles";
 import { useNavigation } from "@react-navigation/native";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 
-import { DestinationsStackParamList } from "@/app/types";
+import { DestinationsStackParamList, Destination } from "@/app/types";
 type NavigationProp = BottomTabNavigationProp<
   DestinationsStackParamList,
   "DestinationList"
 >;
 
-const DestinationCard = React.memo(function Destination(props: IDestination) {
+const DestinationCard = React.memo(function Destination(props: Destination) {
   const defaultImageUrl = props.imageUrls[props.defaultImgUrlIndex];
 
   const navigator = useNavigation<NavigationProp>();

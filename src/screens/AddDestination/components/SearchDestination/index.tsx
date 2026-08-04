@@ -8,7 +8,8 @@ import { Input } from "@/src/components";
 
 import styles from "./styles";
 import { useFindDestinations } from "../../api/useFindDestination";
-import { Place, SearchMode } from "../../types";
+import { Place } from "@/app/types";
+import { SearchMode } from "../../types";
 import { pickPlaces, renderSearchStatusIcon } from "./module";
 import { validateCoordinates } from "../../module";
 
@@ -110,7 +111,9 @@ const SearchDestination = ({ mode, showAutoComplete }: Props) => {
               <Pressable
                 onPress={() => {
                   selectPlace(item); // select the place as a new destination to be added
-                  setQuery(`${item.name}, ${item.state}, ${item.country}`);
+                  setQuery(
+                    `${item.name}, ${item.state || item.county || item.district}, ${item.country}`,
+                  );
                   setShowAutocomplete(false);
                 }}
               >
@@ -121,7 +124,7 @@ const SearchDestination = ({ mode, showAutoComplete }: Props) => {
                       styles.autoCompletePlace,
                       styles.autoCompleteCountry,
                     ]}
-                  >{`${item.state}, ${item.country}`}</Text>
+                  >{`${item.state || item.county || item.district}, ${item.country}`}</Text>
                 </View>
               </Pressable>
             )}

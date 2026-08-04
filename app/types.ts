@@ -33,7 +33,7 @@ export type Navigation = {
 export type TabPressEvent = EventArg<"tabPress", true>;
 
 export interface Place {
-  id: number;
+  id: string;
   name: string;
   state: string;
   country: string;
@@ -51,7 +51,8 @@ export interface DestinationLocation {
   miscInfo?: string;
 }
 
-export interface Destination extends Place, DestinationLocation {
+export interface Destination extends Omit<Place, "id">, DestinationLocation {
+  id: number;
   description: string;
   imageUrls: string[];
   defaultImgUrlIndex: number;

@@ -19,6 +19,7 @@ const Areas = () => {
         destinationName={destination?.name as string}
         testID="destination-map"
         zoomLevel={-15}
+        height={250}
       >
         {climbingAreas?.map((area, index) => (
           <AreaMarker key={index} area={area} />

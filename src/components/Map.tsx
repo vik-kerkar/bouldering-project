@@ -15,12 +15,12 @@ interface MapProps {
   children?: React.ReactNode;
   onPress?: (event: MapPressEvent) => void;
   zoomLevel?: number;
+  height?: number;
 }
 const styles = StyleSheet.create({
   container: {
     borderRadius: 10,
     width: "100%",
-    height: 270,
   },
   markerContainer: {
     alignItems: "center",
@@ -38,6 +38,7 @@ const Map = (props: MapProps) => {
     onPress,
     testID,
     zoomLevel = -1,
+    height = 270,
   } = props;
 
   const DEFAULT_DELTA = 0.005;
@@ -52,7 +53,7 @@ const Map = (props: MapProps) => {
   return (
     <MapView
       testID={testID}
-      style={styles.container}
+      style={[styles.container, { height }]}
       mapType="satellite"
       provider={PROVIDER_GOOGLE}
       onPress={onPress}

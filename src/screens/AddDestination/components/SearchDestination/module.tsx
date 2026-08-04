@@ -1,4 +1,5 @@
-import { Feature, Place } from "../../types";
+import { Feature } from "../../types";
+import { Place } from "@/app/types";
 import { CheckCircleIcon, AlertCircleIcon } from "@/assets/icons";
 
 import { colors } from "@/src/theme";

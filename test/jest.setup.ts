@@ -27,6 +27,10 @@ jest.mock("expo-image-picker", () => {
 jest.mock("expo-device", () => {
   return {
     isDevice: true,
+    deviceType: "PHONE",
+    DeviceType: {
+      TABLET: "TABLET",
+    },
   };
 });
 

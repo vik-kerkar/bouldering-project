@@ -27,25 +27,18 @@ interface ImageButtonProps {
   type: ButtonType;
 }
 
+const imageSources: Record<ButtonType, number> = {
+  previous: require("@/assets/images/nav-button-prev.png"),
+  reset: require("@/assets/images/nav-button-reset.png"),
+  save: require("@/assets/images/nav-button-save.png"),
+  disabled: require("@/assets/images/nav-button-disabled.png"),
+  "disabled-save": require("@/assets/images/nav-button-disabled-save.png"),
+  next: require("@/assets/images/nav-button-next.png"),
+};
+
 const ImageButton = (props: ImageButtonProps) => {
   const { testID, onPress, disabled, type } = props;
-  const getImgSrc = (type: ButtonType) => {
-    switch (type) {
-      case "previous":
-        return require("@/assets/images/nav-button-prev.png");
-      case "reset":
-        return require("@/assets/images/nav-button-reset.png");
-      case "save":
-        return require("@/assets/images/nav-button-save.png");
-      case "disabled":
-        return require("@/assets/images/nav-button-disabled.png");
-      case "disabled-save":
-        return require("@/assets/images/nav-button-disabled-save.png");
-      case "next":
-      default:
-        return require("@/assets/images/nav-button-next.png");
-    }
-  };
+
   return (
     <Pressable
       style={styles.navButton}
@@ -54,7 +47,7 @@ const ImageButton = (props: ImageButtonProps) => {
       disabled={disabled}
     >
       <Image
-        source={getImgSrc(type)}
+        source={imageSources[type]}
         style={styles.navButtonImage}
         resizeMode="contain"
       />
