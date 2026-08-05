@@ -1,50 +1,71 @@
-# Welcome to your Expo app 👋
+# Welcome to your Climbing Destinations app 👋
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Discover climbing destinations around the world, then add your own. This early prototype offers helpfult tips, interactive maps, image carousels, and a growing list of crags to explore.
+
+## Features
+
+- View climbing destinations
+- Add your own climbing destinations
+- Interactive maps
+- Image carousels
+- Upload photos
+- Add climbing areas
+- Helpful tips
+
+## Tech Stack
+
+- Expo
+- React Native
+- Supabase
+- Tanstack Query
+- Zustand
+- React Native Testing Library
+- TypeScript
 
 ## Get started
 
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+### Install dependencies
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### Start the app
 
-## Learn more
+```bash
+ npx expo start
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+### Run tests
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+ npm test
+```
 
-## Join the community
+### Run app in simulator
 
-Join our community of developers creating universal apps.
+- **iOS**: To run the app in the iOS simulator, install Xcode from the Mac App Store. Once Xcode is installed, run `npx expo start` and press i to open in iOS simulator.
+  [Detailed Installion Guide](https://docs.expo.dev/workflow/ios-simulator/)
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- **Android**: To run the app in the Android simulator, install Android Studio from the Mac App Store. Once Android Studio is installed, run `npx expo start` and press a to open in Android simulator.
+  [Detailed Installion Guide](https://docs.expo.dev/workflow/android-studio-emulator/)
+
+### Run the app on your phone or tablet with Expo Go app
+
+- Install the latest version of Expo Go app on your device
+- Run `npx expo start`
+- Scan the QR code from the app or your device camera.
+- The app will download and launch on your device.
+
+### Web support
+
+Due to the use of native modules like `react-native-maps`, the app is currently not supported in the web browser.
+
+### Environment Variables
+
+Environment variables are required to run the app. These will be provided upon request.
+Copy the `.env.example` file to `.env` and fill in the values.
+
+Please send me an [email](mailto:vikkerkar@gmail.com), if you have any questions or issues with the setup.
+
+> **Note:** Development builds are not supported at this time.
