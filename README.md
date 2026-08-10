@@ -24,6 +24,11 @@ Discover climbing destinations around the world, then add your own. This early p
 
 ## Get started
 
+### Prerequisites
+
+- Node.js (20.19.0 or higher)
+- npm (10 or higher)
+
 ### Install dependencies
 
 ```bash
