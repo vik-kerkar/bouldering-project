@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 30,
     alignItems: "stretch",
-    paddingTop: 30,
+    paddingTop: 60,
   },
   stackContainer: {
     backgroundColor: colors.background,
