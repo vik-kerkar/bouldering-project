@@ -102,8 +102,14 @@ Ensure the following tools are installed:
 #### Run Expo Prebuild to generate native iOS project and configure it with the environment variables
 
 ```bash
-npx expo prebuild --platform ios
+npm run prebuild:ios
 ```
+
+- This will generate the native iOS project, configure it with the environment variables
+
+**_*WARNING:*_**
+
+- Do not commit the generated files to the repository.
 
 #### Install iOS native dependencies
 
